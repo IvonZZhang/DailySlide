@@ -22,6 +22,10 @@ class _TrainingPageState extends State<TrainingPage> {
   Timer _timerPeriod;
   int patternNr = 0;
   int nodeLeft = 7;
+  bool isTraining = false;
+  bool secondTrial = false;
+
+  Text feedbackText = Text('');
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final patternLockKey = GlobalKey<PatternLockState>();
@@ -30,24 +34,25 @@ class _TrainingPageState extends State<TrainingPage> {
   @override
   void initState() {
     super.initState();
-    _timerPeriod = new Timer.periodic(new Duration(seconds: 1), (Timer timer) {
-      tempPattern.add(widget.patterns[patternNr][7 - nodeLeft--]);
-      patternLockKey.currentState.setState(() {
-        patternLockKey.currentState.setUsed(tempPattern);
-      });
-
-      if(nodeLeft == 0){
-        if(patternNr == 2) {
-          _timerPeriod.cancel();
-          return;
-        }
-
-        ++patternNr;
-        nodeLeft = 7;
-        tempPattern = [];
-      }
-    });
+    showPatternExample();
   }
+
+  void showPatternExample() => _timerPeriod = new Timer.periodic(new Duration(milliseconds: 300), (Timer timer) {
+    if(nodeLeft == 0){
+      _timerPeriod.cancel();
+      pattern = widget.patterns[patternNr];
+      nodeLeft = 7;
+      tempPattern = [];
+
+      patternLockKey.currentState.setState( () => patternLockKey.currentState.setUsed([]) );
+      setState(() => isTraining = true);
+      return;
+    }
+
+    tempPattern.add(widget.patterns[patternNr][7 - nodeLeft--]);
+    patternLockKey.currentState.setState(() => patternLockKey.currentState.setUsed(tempPattern));
+
+  });
 
 
   @override
@@ -61,7 +66,7 @@ class _TrainingPageState extends State<TrainingPage> {
     return Scaffold(
       key: scaffoldKey,
       appBar: AppBar(
-        title: Text("Check Pattern"),
+        title: Text("Training"),
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -69,21 +74,13 @@ class _TrainingPageState extends State<TrainingPage> {
           Flexible(
             flex: 2,
             child: Text(
-              isConfirm ? "Confirm pattern" : "Draw pattern",
-              style: TextStyle(fontSize: 26),
+              isTraining ? "Please redo the pattern" : "Please look at the pattern",
+              style: TextStyle(fontSize: 46),
             ),
           ),
           Flexible(
             flex: 1,
-            fit: FlexFit.loose,
-            child: FlatButton(
-              onPressed: () {
-                setState(() {
-                  patternLockKey.currentState.setUsed([2]);
-                });
-              },
-              child: Text('Button', style: TextStyle(fontSize: 20),),
-            ),
+            child: feedbackText,
           ),
           Flexible(
             flex: 4,
@@ -92,42 +89,83 @@ class _TrainingPageState extends State<TrainingPage> {
               selectedColor: Colors.amber,
               pointRadius: 27,
               onInputComplete: (List<int> input) {
-                if (input.length < 3) {
-                  scaffoldKey.currentState.hideCurrentSnackBar();
-                  scaffoldKey.currentState.showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        "At least 3 points required",
-                        style: TextStyle(color: Colors.red),
-                      ),
-                    ),
+                setState(() {
+                  feedbackText = listEquals(input, pattern)?
+                  Text(
+                    'Perfect!',
+                    style: TextStyle(fontSize: 30, color: Colors.deepOrange, fontWeight: FontWeight.bold),
+                  )
+                      : Text(
+                    'Mistaken...',
+                    style: TextStyle(fontSize: 30, color: Colors.red, fontWeight: FontWeight.bold),
                   );
-                  return;
-                }
-                if (isConfirm) {
-                  if (listEquals<int>(input, pattern)) {
-                    Navigator.of(context).pop(pattern);
-                  } else {
-                    scaffoldKey.currentState.hideCurrentSnackBar();
-                    scaffoldKey.currentState.showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          "Patterns do not match",
-                          style: TextStyle(color: Colors.red),
-                        ),
-                      ),
+                });
+
+
+
+                if(secondTrial) {
+                  if(patternNr == 2) {
+                    // TODO: data logging
+                    new Timer(Duration(seconds: 1), () => setState(() => feedbackText = Text(
+                          'Training finished! About to exit...',
+                          style: TextStyle(fontSize: 30, color: Colors.black, fontWeight: FontWeight.bold),
+                        )
+                      )
                     );
-                    setState(() {
-                      pattern = null;
-                      isConfirm = false;
-                    });
+                    new Timer(Duration(seconds: 5), () => Navigator.pop(context));
+                    return;
                   }
-                } else {
-                  setState(() {
-                    pattern = input;
-                    isConfirm = true;
+
+                  new Timer(Duration(seconds: 1), () {
+                    setState(() {
+                      ++patternNr;
+                      isTraining = false;
+                      secondTrial = false;
+                      feedbackText = Text('');
+                    });
+                    showPatternExample();
                   });
+                } else {
+                  secondTrial = true;
                 }
+
+
+//                if (input.length < 3) {
+//                  scaffoldKey.currentState.hideCurrentSnackBar();
+//                  scaffoldKey.currentState.showSnackBar(
+//                    SnackBar(
+//                      content: Text(
+//                        "At least 3 points required",
+//                        style: TextStyle(color: Colors.red),
+//                      ),
+//                    ),
+//                  );
+//                  return;
+//                }
+//                if (isConfirm) {
+//                  if (listEquals<int>(input, pattern)) {
+//                    Navigator.of(context).pop(pattern);
+//                  } else {
+//                    scaffoldKey.currentState.hideCurrentSnackBar();
+//                    scaffoldKey.currentState.showSnackBar(
+//                      SnackBar(
+//                        content: Text(
+//                          "Patterns do not match",
+//                          style: TextStyle(color: Colors.red),
+//                        ),
+//                      ),
+//                    );
+//                    setState(() {
+//                      pattern = null;
+//                      isConfirm = false;
+//                    });
+//                  }
+//                } else {
+//                  setState(() {
+//                    pattern = input;
+//                    isConfirm = true;
+//                  });
+//                }
               },
               fillPoints: true,
             ),

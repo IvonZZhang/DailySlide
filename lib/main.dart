@@ -67,3 +67,6 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+
+// TODO: change the font, color...
+// TODO: Show feedback at the end of training.
