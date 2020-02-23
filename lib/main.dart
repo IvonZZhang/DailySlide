@@ -50,17 +50,78 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            RaisedButton(
-              child: Text(
-                'Start a training!',
-                style: const TextStyle(fontSize: 20, color: Colors.white),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ButtonTheme(
+                height: 80,
+                minWidth: 200,
+                child: RaisedButton(
+                  child: Text(
+                    'Day 1',
+                    style: const TextStyle(fontSize: 40, color: Colors.white),
+                  ),
+                  padding: EdgeInsets.all(16.0),
+                  color: Colors.red,
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/training', arguments: 1);
+                  },
+                ),
               ),
-              padding: EdgeInsets.all(16.0),
-              color: Colors.red,
-              onPressed: () {
-                Navigator.pushNamed(context, '/training');
-              },
-            )
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ButtonTheme(
+                height: 80,
+                minWidth: 200,
+                child: RaisedButton(
+                  child: Text(
+                    'Day 2',
+                    style: const TextStyle(fontSize: 40, color: Colors.white),
+                  ),
+                  padding: EdgeInsets.all(16.0),
+                  color: Colors.red,
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/training', arguments: 2);
+                  },
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ButtonTheme(
+                height: 80,
+                minWidth: 200,
+                child: RaisedButton(
+                  child: Text(
+                    'Day 3',
+                    style: const TextStyle(fontSize: 40, color: Colors.white),
+                  ),
+                  padding: EdgeInsets.all(16.0),
+                  color: Colors.red,
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/training', arguments: 3);
+                  },
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ButtonTheme(
+                height: 80,
+                minWidth: 200,
+                child: RaisedButton(
+                  child: Text(
+                    'Day 4',
+                    style: const TextStyle(fontSize: 40, color: Colors.white),
+                  ),
+                  padding: EdgeInsets.all(16.0),
+                  color: Colors.red,
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/training', arguments: 4);
+                  },
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -70,3 +131,17 @@ class _MyHomePageState extends State<MyHomePage> {
 
 // TODO: change the font, color...
 // TODO: Show feedback at the end of training.
+// DoneTODO: block the training every 12 hours
+// DoneTODO: tip, other help info...
+// DoneTODO: preference of dropbox account name?
+// DoneTODO: speed of showing the pattern?
+
+/*
+* Donetodo 1. Show the pattern always on the side.
+* todo 2. Timing in ms for each trying
+* todo p, Good/wrong, date, .
+* todo 3. Daily different training.
+* todo 4. Show how many times remaining.
+* todo 5. Indicate patient on file name.
+* 6.
+* */
