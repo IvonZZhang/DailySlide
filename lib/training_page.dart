@@ -39,6 +39,9 @@ class _TrainingPageState extends State<TrainingPage> {
   // Text in the middle for feedback of a training
   Text feedbackText = Text(' ', style: TextStyle(fontSize: 30),);
 
+  // Is training pattern touchable or not
+  bool isTraining = false;
+
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final trainingPatternKey = GlobalKey<PatternLockState>();
   final showingPatternKey = GlobalKey<PatternLockState>();
@@ -52,15 +55,14 @@ class _TrainingPageState extends State<TrainingPage> {
   void showPatternExample() => _timerPeriod = new Timer.periodic(new Duration(milliseconds: 80), (Timer timer) {
     if(nodeLeft == 0){
       _timerPeriod.cancel();
-//      pattern = widget.patterns[widget.sequence[day - 1][patternNr] - 1];
       nodeLeft = 7;
 
       setState(() => notificationText = Text('Please redo the pattern on the right', style: TextStyle(fontSize: 46)));
+      isTraining = true;
       return;
     }
 
     tempPattern.add(widget.patterns[widget.sequence[day - 1][patternNr] - 1][7 - nodeLeft--]);
-    print(day - 1);
     showingPatternKey.currentState.setState(() => showingPatternKey.currentState.setUsed(tempPattern));
 
   });
@@ -155,43 +157,47 @@ class _TrainingPageState extends State<TrainingPage> {
                 Flexible(
                   flex: 1,
                   child: Center(
-                    child:PatternLock(
-                      key: trainingPatternKey,
-                      selectedColor: Colors.amber,
-                      pointRadius: 27,
-                      fillPoints: true,
-                      onInputComplete: (List<int> input) {
-                        setState(() {
-                          feedbackText = listEquals(input, tempPattern)?
-                              Text('Perfect!', style: TextStyle(fontSize: 30, color: Colors.deepOrange, fontWeight: FontWeight.bold),)
-                              : Text('Mistaken...', style: TextStyle(fontSize: 30, color: Colors.red, fontWeight: FontWeight.bold),);
-                          notificationText = trying % 2 == 0 ?
-                              Text('Please redo the pattern. Remaining: ' + (12 - trying).toString(), style: TextStyle(fontSize: 46))
-                              : Text('Please do it again.           Remaining: ' + (12 - trying).toString(), style: TextStyle(fontSize: 46),);
-                        });
-
-                        if(trying == 12){
-                          if(patternNr == 8) {
-                            // TODO: data logging
-                            new Timer(Duration(seconds: 1), () => setState(() => feedbackText = Text(
-                              'Training finished! About to exit...',
-                              style: TextStyle(fontSize: 30, color: Colors.black, fontWeight: FontWeight.bold),
-                            )
-                            )
-                            );
-                            new Timer(Duration(seconds: 5), () => Navigator.pop(context));
-                            return;
-                          }
+                    child: Visibility(
+                      visible: isTraining,
+                      child: PatternLock(
+                        key: trainingPatternKey,
+                        selectedColor: Colors.amber,
+                        pointRadius: 27,
+                        fillPoints: true,
+                        onInputComplete: (List<int> input) {
                           setState(() {
-                            notificationText = Text('Take a rest: 14', style: TextStyle(fontSize: 46),);
-                            feedbackText = Text(' ', style: TextStyle(fontSize: 30),);
+                            feedbackText = listEquals(input, tempPattern)?
+                            Text('Perfect!', style: TextStyle(fontSize: 30, color: Colors.deepOrange, fontWeight: FontWeight.bold),)
+                                : Text('Mistaken...', style: TextStyle(fontSize: 30, color: Colors.red, fontWeight: FontWeight.bold),);
+                            notificationText = trying % 2 == 0 ?
+                            Text('Please redo the pattern. Remaining: ' + (12 - trying).toString(), style: TextStyle(fontSize: 46))
+                                : Text('Please do it again.           Remaining: ' + (12 - trying).toString(), style: TextStyle(fontSize: 46),);
                           });
-                          takeARest();
-                          trying = 1;
-                        } else {
-                          ++trying;
-                        }
-                      },
+
+                          if(trying == 12){
+                            isTraining = false;
+                            if(patternNr == 8) {
+                              // TODO: data logging
+                              new Timer(Duration(seconds: 1), () => setState(() => feedbackText = Text(
+                                'Training finished! About to exit...',
+                                style: TextStyle(fontSize: 30, color: Colors.black, fontWeight: FontWeight.bold),
+                              )
+                              )
+                              );
+                              new Timer(Duration(seconds: 5), () => Navigator.pop(context));
+                              return;
+                            }
+                            setState(() {
+                              notificationText = Text('Take a rest: 14', style: TextStyle(fontSize: 46),);
+                              feedbackText = Text(' ', style: TextStyle(fontSize: 30),);
+                            });
+                            takeARest();
+                            trying = 1;
+                          } else {
+                            ++trying;
+                          }
+                        },
+                      ),
                     ),
                   ),
                 ),
