@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'training_page.dart';
 import 'package:flutter/services.dart';
+//import 'logger.dart';
 
 void main() => runApp(MyApp());
 

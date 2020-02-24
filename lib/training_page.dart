@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'pattern_lock.dart';
 import 'dart:async';
+import 'logger.dart';
 
 class TrainingPage extends StatefulWidget {
 //  final List<int> pattern_1 = [7, 6, 3, 0, 4, 1, 5];
@@ -10,6 +11,8 @@ class TrainingPage extends StatefulWidget {
   final List<List<int>> patterns = [[7, 6, 3, 0, 4, 1, 5], [7, 4, 8, 5, 2, 1, 3], [7, 3, 4, 0, 1, 2, 5]];
   final List<List<int>> sequence = [[1, 2, 3, 2, 2, 1, 3, 1, 3], [1, 3, 3, 1, 2, 2, 1, 2, 3],
                                     [1, 1, 2, 3, 1, 3, 2, 3, 2], [1, 3, 1, 2, 3, 3, 2, 2, 1]];
+
+  final CounterStorage storage = CounterStorage();
 
   @override
   _TrainingPageState createState() => _TrainingPageState();
@@ -90,7 +93,6 @@ class _TrainingPageState extends State<TrainingPage> {
       });
     }
   });
-
 
   @override
   void dispose() {
