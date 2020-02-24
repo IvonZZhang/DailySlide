@@ -71,7 +71,7 @@ class _TrainingPageState extends State<TrainingPage> {
     --restSec;
     setState(() {
       notificationText = Text(
-        'Take a rest: ' + restSec.toString(), style: TextStyle(fontSize: 46),
+        'Take a rest: $restSec', style: TextStyle(fontSize: 46),
       );
     });
 
@@ -136,7 +136,7 @@ class _TrainingPageState extends State<TrainingPage> {
                           selectedColor: Colors.amber,
                           pointRadius: 27,
                           fillPoints: true,
-                          onInputComplete: (List<int> input) {},
+                          onInputComplete: (List<int> input, int duration) {},
                         ),
                         Image(
                           image: NetworkImage('https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F0%2F02%2FTransparent_square.svg%2F768px-Transparent_square.svg.png&f=1&nofb=1'),
@@ -164,7 +164,7 @@ class _TrainingPageState extends State<TrainingPage> {
                         selectedColor: Colors.amber,
                         pointRadius: 27,
                         fillPoints: true,
-                        onInputComplete: (List<int> input) {
+                        onInputComplete: (List<int> input, int duration) {
                           setState(() {
                             feedbackText = listEquals(input, tempPattern)?
                             Text('Perfect!', style: TextStyle(fontSize: 30, color: Colors.deepOrange, fontWeight: FontWeight.bold),)

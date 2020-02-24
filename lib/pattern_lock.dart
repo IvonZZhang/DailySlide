@@ -9,7 +9,7 @@ class PatternLock extends StatefulWidget {
   final bool showInput;
   final int selectThreshold;
   final bool fillPoints;
-  final Function(List<int>) onInputComplete;
+  final Function(List<int>, int) onInputComplete;
 
   /// Creates [PatternLock] with given params.
   ///
@@ -51,15 +51,26 @@ class PatternLock extends StatefulWidget {
 class PatternLockState extends State<PatternLock> {
   List<int> used = [];
   Offset currentPoint;
+  Stopwatch _stopwatch = new Stopwatch();
 
   void setUsed(List<int> newUsed) => used = newUsed;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      onPanStart: (DragStartDetails details) {
+        setState(() {
+          if(details.sourceTimeStamp != null){
+            _stopwatch.start();
+          }
+        });
+      },
       onPanEnd: (DragEndDetails details) {
         if (used.isNotEmpty) {
-          widget.onInputComplete(used);
+//          print(_stopwatch.elapsedMilliseconds);
+          widget.onInputComplete(used, _stopwatch.elapsedMilliseconds);
+          _stopwatch.stop();
+          _stopwatch.reset();
         }
         setState(() {
           used = [];
