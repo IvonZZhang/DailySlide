@@ -3,22 +3,20 @@ import 'package:flutter/foundation.dart';
 import 'pattern_lock.dart';
 import 'dart:async';
 import 'logger.dart';
+import 'package:after_layout/after_layout.dart';
 
 class TrainingPage extends StatefulWidget {
-//  final List<int> pattern_1 = [7, 6, 3, 0, 4, 1, 5];
-//  final List<int> pattern_2 = [7, 4, 8, 5, 2, 1, 3];
-//  final List<int> pattern_3 = [7, 3, 4, 0, 1, 2, 5];
   final List<List<int>> patterns = [[7, 6, 3, 0, 4, 1, 5], [7, 4, 8, 5, 2, 1, 3], [7, 3, 4, 0, 1, 2, 5]];
   final List<List<int>> sequence = [[1, 2, 3, 2, 2, 1, 3, 1, 3], [1, 3, 3, 1, 2, 2, 1, 2, 3],
                                     [1, 1, 2, 3, 1, 3, 2, 3, 2], [1, 3, 1, 2, 3, 3, 2, 2, 1]];
 
-  final CounterStorage storage = CounterStorage();
+  final Logger _logger = Logger('training_data');
 
   @override
   _TrainingPageState createState() => _TrainingPageState();
 }
 
-class _TrainingPageState extends State<TrainingPage> {
+class _TrainingPageState extends State<TrainingPage> with AfterLayoutMixin<TrainingPage>{
 
   // Nr of node left during showing
   int nodeLeft = 7;
@@ -52,6 +50,19 @@ class _TrainingPageState extends State<TrainingPage> {
   @override
   void initState() {
     super.initState();
+  }
+
+
+  @override
+  void setState(VoidCallback fn) {
+    if(mounted){
+      super.setState(fn);
+    }
+  }
+
+  @override
+  void afterFirstLayout(BuildContext context) {
+    widget._logger.writeFileHeader(1, day); // TODO: patient nr
     showPatternExample();
   }
 
@@ -59,6 +70,7 @@ class _TrainingPageState extends State<TrainingPage> {
     if(nodeLeft == 0){
       _timerPeriod.cancel();
       nodeLeft = 7;
+      widget._logger.writePatternNr(patternNr + 1);
 
       setState(() => notificationText = Text('Please redo the pattern on the right', style: TextStyle(fontSize: 46)));
       isTraining = true;
@@ -66,6 +78,7 @@ class _TrainingPageState extends State<TrainingPage> {
     }
 
     tempPattern.add(widget.patterns[widget.sequence[day - 1][patternNr] - 1][7 - nodeLeft--]);
+    print(day);
     showingPatternKey.currentState.setState(() => showingPatternKey.currentState.setUsed(tempPattern));
 
   });
@@ -97,13 +110,19 @@ class _TrainingPageState extends State<TrainingPage> {
   @override
   void dispose() {
     super.dispose();
-    _timerPeriod.cancel();
+    if(_timerPeriod != null){
+      _timerPeriod.cancel();
+    }
+    if(_restTimerPeriod != null){
+      _restTimerPeriod.cancel();
+    }
+    widget._logger.writeFileFooter();
+    // TODO: upload file
   }
 
   @override
   Widget build(BuildContext context) {
     day = ModalRoute.of(context).settings.arguments;
-//    --day;
 
     return Scaffold(
       key: scaffoldKey,
@@ -176,10 +195,11 @@ class _TrainingPageState extends State<TrainingPage> {
                                 : Text('Please do it again.           Remaining: ' + (12 - trying).toString(), style: TextStyle(fontSize: 46),);
                           });
 
+                          widget._logger.writeTrainingResult(trying, listEquals(input, tempPattern), duration);
+
                           if(trying == 12){
                             isTraining = false;
                             if(patternNr == 8) {
-                              // TODO: data logging
                               new Timer(Duration(seconds: 1), () => setState(() => feedbackText = Text(
                                 'Training finished! About to exit...',
                                 style: TextStyle(fontSize: 30, color: Colors.black, fontWeight: FontWeight.bold),
@@ -212,92 +232,3 @@ class _TrainingPageState extends State<TrainingPage> {
     );
   }
 }
-
-/*
-* PatternLock(
-                  key: patternLockKey,
-                  selectedColor: Colors.amber,
-                  pointRadius: 27,
-                  onInputComplete: (List<int> input) {
-                    setState(() {
-                      feedbackText = listEquals(input, pattern)?
-                      Text(
-                        'Perfect!',
-                        style: TextStyle(fontSize: 30, color: Colors.deepOrange, fontWeight: FontWeight.bold),
-                      )
-                          : Text(
-                        'Mistaken...',
-                        style: TextStyle(fontSize: 30, color: Colors.red, fontWeight: FontWeight.bold),
-                      );
-                    });
-
-                    if(secondTrial) {
-                      if(patternNr == 2) {
-                        // TODO: data logging
-                        new Timer(Duration(seconds: 1), () => setState(() => feedbackText = Text(
-                          'Training finished! About to exit...',
-                          style: TextStyle(fontSize: 30, color: Colors.black, fontWeight: FontWeight.bold),
-                        )
-                        )
-                        );
-                        new Timer(Duration(seconds: 5), () => Navigator.pop(context));
-                        return;
-                      }
-
-                      new Timer(Duration(seconds: 1), () {
-                        setState(() {
-                          ++patternNr;
-                          isTraining = false;
-                          secondTrial = false;
-                          feedbackText = Text(' ');
-                        });
-                        showPatternExample();
-                      });
-                    } else {
-                      secondTrial = true;
-                    }
-                  },
-                  fillPoints: true,
-                ),
-* */
-
-
-
-
-
-//                if (input.length < 3) {
-//                  scaffoldKey.currentState.hideCurrentSnackBar();
-//                  scaffoldKey.currentState.showSnackBar(
-//                    SnackBar(
-//                      content: Text(
-//                        "At least 3 points required",
-//                        style: TextStyle(color: Colors.red),
-//                      ),
-//                    ),
-//                  );
-//                  return;
-//                }
-//                if (isConfirm) {
-//                  if (listEquals<int>(input, pattern)) {
-//                    Navigator.of(context).pop(pattern);
-//                  } else {
-//                    scaffoldKey.currentState.hideCurrentSnackBar();
-//                    scaffoldKey.currentState.showSnackBar(
-//                      SnackBar(
-//                        content: Text(
-//                          "Patterns do not match",
-//                          style: TextStyle(color: Colors.red),
-//                        ),
-//                      ),
-//                    );
-//                    setState(() {
-//                      pattern = null;
-//                      isConfirm = false;
-//                    });
-//                  }
-//                } else {
-//                  setState(() {
-//                    pattern = input;
-//                    isConfirm = true;
-//                  });
-//                }

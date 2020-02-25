@@ -19,6 +19,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_launcher_icons: "^0.7.3"
+  path_provider: ^1.6.1
+  intl: ^0.16.1
+  after_layout: ^1.0.7+2
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -27,8 +31,6 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_launcher_icons: "^0.7.3"
-  path_provider: ^1.6.1
 
 flutter_icons:
   android: "launcher_icon"

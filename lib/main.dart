@@ -139,8 +139,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
 /*
 * Donetodo 1. Show the pattern always on the side.
-* todo 2. Timing in ms for each trying
-* todo p, Good/wrong, date, .
+* Donetodo 2. Timing in ms for each trying
+* Donetodo p, Good/wrong, date, .
 * Donetodo 3. Daily different training.
 * Donetodo 4. Show how many times remaining.
 * todo 5. Indicate patient on file name.
