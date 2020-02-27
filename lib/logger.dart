@@ -8,29 +8,38 @@ class Logger {
   Logger(this._filename);
 
   Future<String> get _localPath async {
-    final directory = await getApplicationDocumentsDirectory();
+    final directory = await getApplicationSupportDirectory(); // DoneTODO: change to cache
     return directory.path;
   }
 
   Future<File> get _localFile async {
     final path = await _localPath;
 //    /data/user/0/com.ivonzhang.daily_slide/app_flutter
-    return File('$path/$_filename.txt'); // TODO: change file name
+    return File('$path/$_filename.txt');
   }
 
-//  Future<int> readCounter() async {
-//    try {
-//      final file = await _localFile;
-//
-//      // Read the file
-//      String contents = await file.readAsString();
-//
-//      return int.parse(contents);
-//    } catch (e) {
-//      // If encountering an error, return 0
-//      return 0;
-//    }
-//  }
+  Future<int> readCounter() async {
+    try {
+      final file = await _localFile;
+
+      // Read the file
+      String contents = await file.readAsString();
+
+      return int.parse(contents);
+    } catch (e) {
+      // If encountering an error, return 0
+      return 0;
+    }
+  }
+
+  Future<String> readLog() async {
+    try {
+      final file = await _localFile;
+      return file.readAsString();
+    } catch (e) {
+      return e.toString();
+    }
+  }
 
   void writeFileHeader(int patientNr, int dayNr) async {
     final file = await _localFile;

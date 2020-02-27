@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'training_page.dart';
 import 'package:flutter/services.dart';
 //import 'logger.dart';
@@ -33,19 +34,75 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-//  int _counter = 0;
-//
-//  void _incrementCounter() {
-//    setState(() {
-//      _counter++;
-//    });
-//  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.blue
+              ),
+              child: Text(
+                'Researcher page',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                ),
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.settings),
+              title: Text('Settings'),
+//              onTap: () {
+//                showDialog(
+//                  context: context,
+//                  builder: (BuildContext context) {
+//                    return AlertDialog(
+//                      content: Form(
+//                        key: _formKey,
+//                        child: Column(
+//                          mainAxisSize: MainAxisSize.min,
+//                          children: <Widget>[
+//                            Padding(
+//                              padding: EdgeInsets.all(8.0),
+//                              child: TextFormField(),
+//                            ),
+//                            Padding(
+//                              padding: EdgeInsets.all(8.0),
+//                              child: TextFormField(),
+//                            ),
+//                            Padding(
+//                              padding: const EdgeInsets.all(8.0),
+//                              child: RaisedButton(
+//                                child: Text("Submitß"),
+//                                onPressed: () {
+//                                  if (_formKey.currentState.validate()) {
+//                                    _formKey.currentState.save();
+//                                  }
+//                                },
+//                              ),
+//                            )
+//                          ],
+//                        ),
+//                      ),
+//                    );
+//                  });
+//              },
+            ),
+            ListTile(
+              leading: Icon(Icons.arrow_back),
+              title: Text('Close'),
+              onTap: () => Navigator.pop(context),
+            )
+          ],
+        ),
       ),
       body: Center(
         child: Column(
