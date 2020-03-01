@@ -25,6 +25,7 @@ dependencies:
   intl: ^0.16.1
   after_layout: ^1.0.7+2
   http: ^0.12.0+4
+  oauth2: ^1.5.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -57,6 +58,7 @@ flutter:
   #  - images/a_dot_ham.jpeg
   assets:
     - assets/transparent.png
+    - assets/KU_Leuven.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

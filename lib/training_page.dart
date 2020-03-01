@@ -10,7 +10,15 @@ import 'package:http/http.dart' as http;
 import 'dart:io';
 import 'package:intl/intl.dart';
 
+class TrainingPageArguments {
+  final int dayNr;
+  final int patientNr;
+
+  TrainingPageArguments(this.dayNr, this.patientNr);
+}
+
 class TrainingPage extends StatefulWidget {
+
   final List<List<int>> patterns = [
     [7, 6, 3, 0, 4, 1, 5],
     [7, 4, 8, 5, 2, 1, 3],
@@ -79,7 +87,8 @@ class _TrainingPageState extends State<TrainingPage>
 
   @override
   void afterFirstLayout(BuildContext context) {
-    widget._logger.writeFileHeader(1, day); // TODO: patient nr
+    final TrainingPageArguments args = ModalRoute.of(context).settings.arguments;
+    widget._logger.writeFileHeader(args.patientNr, day); // DoneTODO: patient nr
     showPatternExample();
   }
 
@@ -99,7 +108,6 @@ class _TrainingPageState extends State<TrainingPage>
 
         tempPattern.add(widget.patterns[widget.sequence[day - 1][patternNr] - 1]
             [7 - nodeLeft--]);
-        print(day);
         showingPatternKey.currentState.setState(
             () => showingPatternKey.currentState.setUsed(tempPattern));
       });
@@ -142,10 +150,8 @@ class _TrainingPageState extends State<TrainingPage>
       _restTimerPeriod.cancel();
     }
 //    widget._logger.writeFileFooter();
-//    uploadToDbx();
+//    uploadToDbx(666);
 //    widget._logger.readLog().then((value) => print(value));
-    // TODO: upload file
-    // TODO: delete temp file
   }
 
   Future<int> uploadToDbx(int patientNr) async {
@@ -155,7 +161,7 @@ class _TrainingPageState extends State<TrainingPage>
         'https://api.dropboxapi.com/2/files/get_temporary_upload_link';
     var headersGetLink = {
       'Authorization':
-          'Bearer wHGP8A-xg1AAAAAAAAAAEJP6pfIIbAFxGDEIuXpwAGv6nF4NZxiLvVOUJnMn-7rA',
+          'Bearer wHGP8A-xg1AAAAAAAAAAGLDSRW1zS5ghHK-W57eqNMy06ekPl8bXCzG5JyVL5_A5',
       'Content-Type': 'application/json'
     };
     var dataGetLink = {
@@ -174,6 +180,7 @@ class _TrainingPageState extends State<TrainingPage>
 
     // Upload the log file
     var urlUpload = jsonDecode(responseLink.body)['link'];
+    print(urlUpload);
     String dataUpload = await widget._logger.readLog();
 
     final request = await HttpClient().postUrl(Uri.parse(urlUpload));
@@ -187,7 +194,8 @@ class _TrainingPageState extends State<TrainingPage>
 
   @override
   Widget build(BuildContext context) {
-    day = ModalRoute.of(context).settings.arguments;
+    final TrainingPageArguments args = ModalRoute.of(context).settings.arguments;
+    day = args.dayNr;
 
     return Scaffold(
       key: scaffoldKey,
@@ -296,7 +304,7 @@ class _TrainingPageState extends State<TrainingPage>
                                             color: Colors.black,
                                             fontWeight: FontWeight.bold),
                                       )));
-                              String syncInfo = await uploadToDbx(24) == 200 // TODO: patientNr
+                              String syncInfo = await uploadToDbx(args.patientNr) == 200 // DoneTODO: patientNr
                                   ? 'Data sync successfully!'
                                   : 'Data sync failed.';
                               scaffoldKey.currentState.hideCurrentSnackBar();

@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'training_page.dart';
 import 'package:flutter/services.dart';
-//import 'logger.dart';
+import 'settings_page.dart';
+import 'package:crypto/crypto.dart';
 
 void main() => runApp(MyApp());
 
@@ -19,6 +22,7 @@ class MyApp extends StatelessWidget {
       home: MyHomePage(title: 'Daily Slide'),
       routes: {
         '/training': (context) => TrainingPage(),
+        '/settings': (context) => SettingsPage(),
       },
     );
   }
@@ -35,66 +39,104 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
+  final _formKey = new GlobalKey<FormState>();
+  final _scaffoldKey = new GlobalKey<ScaffoldState>();
+
+  int patientNr = -1;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text(widget.title),
       ),
+      resizeToAvoidBottomPadding: false,
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
             DrawerHeader(
               decoration: BoxDecoration(
-                color: Colors.blue
+//                color: Colors.blue,
+                image: DecorationImage(
+                  image: AssetImage('assets/KU_Leuven.png'),
+                  fit: BoxFit.cover,
+                ),
               ),
               child: Text(
                 'Researcher page',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 24,
+                  fontStyle: FontStyle.italic,
+                  decoration: TextDecoration.underline,
                 ),
               ),
             ),
             ListTile(
               leading: Icon(Icons.settings),
               title: Text('Settings'),
-//              onTap: () {
-//                showDialog(
-//                  context: context,
-//                  builder: (BuildContext context) {
-//                    return AlertDialog(
-//                      content: Form(
-//                        key: _formKey,
-//                        child: Column(
-//                          mainAxisSize: MainAxisSize.min,
-//                          children: <Widget>[
-//                            Padding(
-//                              padding: EdgeInsets.all(8.0),
-//                              child: TextFormField(),
-//                            ),
-//                            Padding(
-//                              padding: EdgeInsets.all(8.0),
-//                              child: TextFormField(),
-//                            ),
-//                            Padding(
-//                              padding: const EdgeInsets.all(8.0),
-//                              child: RaisedButton(
-//                                child: Text("Submitß"),
-//                                onPressed: () {
-//                                  if (_formKey.currentState.validate()) {
-//                                    _formKey.currentState.save();
-//                                  }
-//                                },
-//                              ),
-//                            )
-//                          ],
-//                        ),
-//                      ),
-//                    );
-//                  });
-//              },
+              onTap: () {
+                showDialog(
+                  context: context,
+                  barrierDismissible: true,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      content: Form(
+                        key: _formKey,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text('Please enter password:'),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: TextFormField(
+                                obscureText: true,
+                                validator: (value) {
+                                  if(value.isEmpty) {
+                                    return 'Please enter the password';
+                                  } else if (sha256.convert(utf8.encode(value)).toString() == '22eeb1a9473d7a35564b883ee49aaf21d3709642d5ade76b663b897cfeda924b') {
+                                    return null;
+                                  }
+                                  return 'Incorrect password';
+                                },
+                              ),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: FlatButton(
+                                    child: Text("CANCEL", style: TextStyle(color: Colors.red),),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: FlatButton(
+                                    child: Text("ENTER", style: TextStyle(color: Colors.red),),
+                                    onPressed: () {
+                                      if (_formKey.currentState.validate()) {
+                                        _navigateToSettingsPage(context);
+                                      }
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  });
+              },
             ),
             ListTile(
               leading: Icon(Icons.arrow_back),
@@ -121,7 +163,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   padding: EdgeInsets.all(16.0),
                   color: Colors.red,
                   onPressed: () {
-                    Navigator.pushNamed(context, '/training', arguments: 1);
+                    Navigator.pushNamed(context, '/training', arguments: TrainingPageArguments(1, patientNr));
                   },
                 ),
               ),
@@ -139,7 +181,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   padding: EdgeInsets.all(16.0),
                   color: Colors.red,
                   onPressed: () {
-                    Navigator.pushNamed(context, '/training', arguments: 2);
+                    Navigator.pushNamed(context, '/training', arguments: TrainingPageArguments(2, patientNr));
                   },
                 ),
               ),
@@ -157,7 +199,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   padding: EdgeInsets.all(16.0),
                   color: Colors.red,
                   onPressed: () {
-                    Navigator.pushNamed(context, '/training', arguments: 3);
+                    Navigator.pushNamed(context, '/training', arguments: TrainingPageArguments(3, patientNr));
                   },
                 ),
               ),
@@ -175,7 +217,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   padding: EdgeInsets.all(16.0),
                   color: Colors.red,
                   onPressed: () {
-                    Navigator.pushNamed(context, '/training', arguments: 4);
+                    Navigator.pushNamed(context, '/training', arguments: TrainingPageArguments(4, patientNr));
                   },
                 ),
               ),
@@ -185,6 +227,14 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
+
+  _navigateToSettingsPage(BuildContext context) async {
+    final result = await Navigator.pushNamed(context, '/settings');
+    if(result != null) {
+      patientNr = result;
+    }
+    Navigator.pop(context);
+  }
 }
 
 // TODO: change the font, color...
@@ -193,6 +243,7 @@ class _MyHomePageState extends State<MyHomePage> {
 // DoneTODO: tip, other help info...
 // DoneTODO: preference of dropbox account name?
 // DoneTODO: speed of showing the pattern?
+// TODO: block back and menu during training
 
 /*
 * Donetodo 1. Show the pattern always on the side.
@@ -200,6 +251,6 @@ class _MyHomePageState extends State<MyHomePage> {
 * Donetodo p, Good/wrong, date, .
 * Donetodo 3. Daily different training.
 * Donetodo 4. Show how many times remaining.
-* todo 5. Indicate patient on file name.
+* Donetodo 5. Indicate patient on file name.
 * 6.
 * */
