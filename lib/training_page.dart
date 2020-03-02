@@ -93,7 +93,7 @@ class _TrainingPageState extends State<TrainingPage>
   }
 
   void showPatternExample() => _timerPeriod =
-          new Timer.periodic(new Duration(milliseconds: 80), (Timer timer) {
+          new Timer.periodic(new Duration(milliseconds: 800), (Timer timer) {
         if (nodeLeft == 0) {
           _timerPeriod.cancel();
           nodeLeft = 7;
