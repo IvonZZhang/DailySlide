@@ -32,6 +32,10 @@ class Logger {
     }
   }
 
+  Future<File> getLogFile() async {
+    return this._localFile;
+  }
+
   Future<String> readLog() async {
     try {
       final file = await _localFile;

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'pattern_lock.dart';
@@ -150,8 +151,25 @@ class _TrainingPageState extends State<TrainingPage>
       _restTimerPeriod.cancel();
     }
 //    widget._logger.writeFileFooter();
-//    uploadToDbx(666);
+//    upload(66);
 //    widget._logger.readLog().then((value) => print(value));
+//    uploadToFirebase(33);
+  }
+
+  Future<int> upload(int patientNr) async {
+//    return uploadToDbx(patientNr);
+    return uploadToFirebase(patientNr);
+  }
+
+  Future<int> uploadToFirebase(int patientNr) async {
+    var date = DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
+    String path = '/$patientNr/$patientNr $date Day$day.txt';
+
+    final StorageReference ref = FirebaseStorage().ref().child(path);
+    var uploadTask = ref.putFile(await widget._logger.getLogFile());
+    StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
+
+    return taskSnapshot.error == null ? 0 : -1;
   }
 
   Future<int> uploadToDbx(int patientNr) async {
@@ -161,7 +179,7 @@ class _TrainingPageState extends State<TrainingPage>
         'https://api.dropboxapi.com/2/files/get_temporary_upload_link';
     var headersGetLink = {
       'Authorization':
-          'Bearer wHGP8A-xg1AAAAAAAAAAGLDSRW1zS5ghHK-W57eqNMy06ekPl8bXCzG5JyVL5_A5',
+          'Bearer wHGP8A-xg1AAAAAAAAAAGZXdv9qzFMWsVgmM7KwWxoZ617nh6ykiRbsHRllB21Pa',
       'Content-Type': 'application/json'
     };
     var dataGetLink = {
@@ -304,7 +322,7 @@ class _TrainingPageState extends State<TrainingPage>
                                             color: Colors.black,
                                             fontWeight: FontWeight.bold),
                                       )));
-                              String syncInfo = await uploadToDbx(args.patientNr) == 200 // DoneTODO: patientNr
+                              String syncInfo = await upload(args.patientNr) == 0 // DoneTODO: patientNr
                                   ? 'Data sync successfully!'
                                   : 'Data sync failed.';
                               scaffoldKey.currentState.hideCurrentSnackBar();
