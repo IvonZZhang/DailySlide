@@ -44,7 +44,8 @@ class _TrainingPageState extends State<TrainingPage>
 
   // Constants
   static final int EXAMPLE_TIME_MS = 80;
-  static final int WAITING_TIME_MS = 1;
+  static final int WAITING_TIME_MS = 14;
+
   static final Color bgColor = Color(0xFF474747);
   static final Color regularTextColor = Colors.blueGrey[50];
   static final Color selectedCircleColor = Colors.blue[900];
@@ -140,6 +141,18 @@ class _TrainingPageState extends State<TrainingPage>
             style: TextStyle(fontSize: 46, color: regularTextColor),
           );
         });
+
+        if (restSec == (WAITING_TIME_MS - 1)) {
+          setState(() {
+            feedbackText = Text(
+              ' ',
+              style: TextStyle(fontSize: 30, color: regularTextColor),
+            );
+            isResting = true;
+            showingPatternKey.currentState
+              .setState(() => showingPatternKey.currentState.setUsed([]));
+          });
+        }
 
         if (restSec == 0) {
           _restTimerPeriod.cancel();
@@ -423,13 +436,13 @@ class _TrainingPageState extends State<TrainingPage>
                                     'Take a rest: $WAITING_TIME_MS',
                                     style: TextStyle(fontSize: 46, color: regularTextColor),
                                   );
-                                  feedbackText = Text(
-                                    ' ',
-                                    style: TextStyle(fontSize: 30, color: regularTextColor),
-                                  );
-                                  isResting = true;
-                                  showingPatternKey.currentState
-                                    .setState(() => showingPatternKey.currentState.setUsed([]));
+//                                  feedbackText = Text(
+//                                    ' ',
+//                                    style: TextStyle(fontSize: 30, color: regularTextColor),
+//                                  );
+//                                  isResting = true;
+//                                  showingPatternKey.currentState
+//                                    .setState(() => showingPatternKey.currentState.setUsed([]));
                                 });
                                 takeARest();
                                 trying = 1;
