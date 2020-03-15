@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'pattern_lock.dart';
 import 'dart:async';
 import 'logger.dart';
@@ -84,6 +85,8 @@ class _TrainingPageState extends State<TrainingPage>
 
   // Is example pattern is visible or not
   bool isResting = false;
+
+  DateTime currentBackPressTime;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final trainingPatternKey = GlobalKey<PatternLockState>();
@@ -225,215 +228,226 @@ class _TrainingPageState extends State<TrainingPage>
     return response.statusCode;
   }
 
+  Future<bool> showExitDialog() async {
+    return await showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Are you sure to exit?'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('The unfinished training will not be counted.'),
+//                            Text('You\’re like me. I’m never satisfied.'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('NO'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            FlatButton(
+              child: Text('YES'),
+              onPressed: () {
+                widget._logger.writeLine('Training stopped by emergency button.');
+                widget._logger.writeFileFooter();
+                // TODO: sync
+                Navigator.of(context).popUntil(ModalRoute.withName('/'));
+//                            SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+              },
+            )
+          ],
+        );
+      }
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final TrainingPageArguments args = ModalRoute.of(context).settings.arguments;
     day = args.dayNr;
 
-    return Scaffold(
-      key: scaffoldKey,
-      appBar: AppBar(
-        title: Text("Training"),
-      ),
-      backgroundColor: bgColor,
-      body: Stack(
-        children: [
-          Positioned(
-            top: 0,
-            right: 0,
-            child: RaisedButton(
-              child: Text('Exit training', style: TextStyle(fontSize: 16, color: Colors.white70, fontWeight: FontWeight.bold),),
-              color: Colors.red,
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  barrierDismissible: true,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: Text('Are you sure to exit?'),
-                      content: SingleChildScrollView(
-                        child: ListBody(
-                          children: <Widget>[
-                            Text('The unfinished training will not be counted.'),
-//                            Text('You\’re like me. I’m never satisfied.'),
-                          ],
-                        ),
-                      ),
-                      actions: <Widget>[
-                        FlatButton(
-                          child: Text('NO'),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                        FlatButton(
-                          child: Text('YES'),
-                          onPressed: () {
-                            Navigator.of(context).popUntil(ModalRoute.withName('/'));
-                          },
-                        )
-                      ],
-                    );
-                  }
-                );
-              },)
-          ),
-          Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            Flexible(
-              flex: 2,
-              child: notificationText,
+    return WillPopScope(
+      onWillPop: showExitDialog,
+      child: Scaffold(
+        key: scaffoldKey,
+        appBar: AppBar(
+          title: Text("Training"),
+        ),
+        backgroundColor: bgColor,
+        body: Stack(
+          children: [
+            Positioned(
+              top: 0,
+              right: 0,
+              child: RaisedButton(
+                child: Text('Exit training', style: TextStyle(fontSize: 16, color: Colors.white70, fontWeight: FontWeight.bold),),
+                color: Colors.red,
+                onPressed: () {
+                  showExitDialog();
+                },)
             ),
-            Flexible(
-              flex: 1,
-              child: feedbackText,
-            ),
-            Flexible(
-              flex: 4,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Flexible(
-                    flex: 1,
-                    child: Center(
-                        child: Stack(
-                      fit: StackFit.expand,
-                      children: <Widget>[
-                        Visibility(
-                          visible: !isResting,
+            Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              Flexible(
+                flex: 2,
+                child: notificationText,
+              ),
+              Flexible(
+                flex: 1,
+                child: feedbackText,
+              ),
+              Flexible(
+                flex: 4,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Flexible(
+                      flex: 1,
+                      child: Center(
+                          child: Stack(
+                        fit: StackFit.expand,
+                        children: <Widget>[
+                          Visibility(
+                            visible: !isResting,
+                            child: PatternLock(
+                              key: showingPatternKey,
+                              selectedColor: selectedCircleColor,
+                              notSelectedColor: notSelectedCircleColor,
+                              pointRadius: 27,
+                              fillPoints: true,
+                              onInputComplete: (List<int> input, int duration) {},
+                            ),
+                          ),
+                          Image(
+                            image: AssetImage('assets/transparent.png')
+                          ),
+                          Positioned(
+                            bottom: 40,
+                            right: 200,
+                            child: Visibility(
+                              visible: !isResting,
+                              child: Text(
+                                'Example',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 30,
+                                    color: exampleTextColor),
+                              ),
+                            ),
+                          ),
+                        ],
+                      )),
+                    ),
+                    Flexible(
+                      flex: 1,
+                      child: Center(
+                        child: Visibility(
+                          visible: isTraining,
                           child: PatternLock(
-                            key: showingPatternKey,
+                            key: trainingPatternKey,
                             selectedColor: selectedCircleColor,
                             notSelectedColor: notSelectedCircleColor,
                             pointRadius: 27,
                             fillPoints: true,
-                            onInputComplete: (List<int> input, int duration) {},
-                          ),
-                        ),
-                        Image(
-                          image: AssetImage('assets/transparent.png')
-                        ),
-                        Positioned(
-                          bottom: 40,
-                          right: 200,
-                          child: Visibility(
-                            visible: !isResting,
-                            child: Text(
-                              'Example',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 30,
-                                  color: exampleTextColor),
-                            ),
-                          ),
-                        ),
-                      ],
-                    )),
-                  ),
-                  Flexible(
-                    flex: 1,
-                    child: Center(
-                      child: Visibility(
-                        visible: isTraining,
-                        child: PatternLock(
-                          key: trainingPatternKey,
-                          selectedColor: selectedCircleColor,
-                          notSelectedColor: notSelectedCircleColor,
-                          pointRadius: 27,
-                          fillPoints: true,
-                          onInputComplete:
-                              (List<int> input, int duration) async {
-                            setState(() {
-                              feedbackText = listEquals(input, tempPattern)
-                                  ? Text(
-                                      'Perfect!',
-                                      style: TextStyle(
-                                          fontSize: 30,
-                                          color: feedbackTextColor,
-                                          fontWeight: FontWeight.bold),
-                                    )
-                                  : Text(
-                                      'Mistaken...',
-                                      style: TextStyle(
-                                          fontSize: 30,
-                                          color: feedbackTextColor,
-                                          fontWeight: FontWeight.bold),
-                                    );
-                              notificationText = trying % 2 == 0
-                                  ? Text(
-                                      'Please redo the pattern. Remaining: ' +
-                                          (12 - trying).toString(),
-                                      style: TextStyle(fontSize: 46, color: regularTextColor))
-                                  : Text(
-                                      'Please do it again.           Remaining: ' +
-                                          (12 - trying).toString(),
-                                      style: TextStyle(fontSize: 46, color: regularTextColor),
-                                    );
-                            });
-
-                            widget._logger.writeTrainingResult(trying,
-                                listEquals(input, tempPattern), duration);
-
-                            if (trying == 12) {
-                              isTraining = false;
-                              if (patternNr == 8) {
-                                widget._logger.writeFileFooter();
-                                new Timer(
-                                    Duration(seconds: 1),
-                                    () => setState(() => feedbackText = Text(
-                                          'Training finished! Exit after syncing data...',
-                                          style: TextStyle(
-                                              fontSize: 30,
-                                              color: regularTextColor,
-                                              fontWeight: FontWeight.bold),
-                                        )));
-                                String syncInfo = await upload(args.patientNr) == 0 // DoneTODO: patientNr
-                                    ? 'Data sync successfully!'
-                                    : 'Data sync failed.';
-                                scaffoldKey.currentState.hideCurrentSnackBar();
-                                scaffoldKey.currentState.showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      syncInfo,
-                                      style: TextStyle(color: snackBarTextColor),
-                                    ),
-                                  ),
-                                );
-                                new Timer(Duration(seconds: 2),
-                                    () => Navigator.pop(context));
-                                return;
-                              }
-
+                            onInputComplete:
+                                (List<int> input, int duration) async {
                               setState(() {
-                                notificationText = Text(
-                                  'Take a rest: $WAITING_TIME_MS',
-                                  style: TextStyle(fontSize: 46, color: regularTextColor),
-                                );
-                                feedbackText = Text(
-                                  ' ',
-                                  style: TextStyle(fontSize: 30, color: regularTextColor),
-                                );
-                                isResting = true;
-                                showingPatternKey.currentState
-                                  .setState(() => showingPatternKey.currentState.setUsed([]));
+                                feedbackText = listEquals(input, tempPattern)
+                                    ? Text(
+                                        'Perfect!',
+                                        style: TextStyle(
+                                            fontSize: 30,
+                                            color: feedbackTextColor,
+                                            fontWeight: FontWeight.bold),
+                                      )
+                                    : Text(
+                                        'Mistaken...',
+                                        style: TextStyle(
+                                            fontSize: 30,
+                                            color: feedbackTextColor,
+                                            fontWeight: FontWeight.bold),
+                                      );
+                                notificationText = trying % 2 == 0
+                                    ? Text(
+                                        'Please redo the pattern. Remaining: ' +
+                                            (12 - trying).toString(),
+                                        style: TextStyle(fontSize: 46, color: regularTextColor))
+                                    : Text(
+                                        'Please do it again.           Remaining: ' +
+                                            (12 - trying).toString(),
+                                        style: TextStyle(fontSize: 46, color: regularTextColor),
+                                      );
                               });
-                              takeARest();
-                              trying = 1;
-                            } else {
-                              ++trying;
-                            }
-                          },
+
+                              widget._logger.writeTrainingResult(trying,
+                                  listEquals(input, tempPattern), duration);
+
+                              if (trying == 12) {
+                                isTraining = false;
+                                if (patternNr == 8) {
+                                  widget._logger.writeFileFooter();
+                                  new Timer(
+                                      Duration(seconds: 1),
+                                      () => setState(() => feedbackText = Text(
+                                            'Training finished! Exit after syncing data...',
+                                            style: TextStyle(
+                                                fontSize: 30,
+                                                color: regularTextColor,
+                                                fontWeight: FontWeight.bold),
+                                          )));
+                                  String syncInfo = await upload(args.patientNr) == 0 // DoneTODO: patientNr
+                                      ? 'Data sync successfully!'
+                                      : 'Data sync failed.';
+                                  scaffoldKey.currentState.hideCurrentSnackBar();
+                                  scaffoldKey.currentState.showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        syncInfo,
+                                        style: TextStyle(color: snackBarTextColor),
+                                      ),
+                                    ),
+                                  );
+                                  new Timer(Duration(seconds: 2),
+                                      () => Navigator.pop(context));
+                                  return;
+                                }
+
+                                setState(() {
+                                  notificationText = Text(
+                                    'Take a rest: $WAITING_TIME_MS',
+                                    style: TextStyle(fontSize: 46, color: regularTextColor),
+                                  );
+                                  feedbackText = Text(
+                                    ' ',
+                                    style: TextStyle(fontSize: 30, color: regularTextColor),
+                                  );
+                                  isResting = true;
+                                  showingPatternKey.currentState
+                                    .setState(() => showingPatternKey.currentState.setUsed([]));
+                                });
+                                takeARest();
+                                trying = 1;
+                              } else {
+                                ++trying;
+                              }
+                            },
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              )
-            ),
-          ],
-        ),
-      ]),
+                  ],
+                )
+              ),
+            ],
+          ),
+        ]),
+      ),
     );
   }
 }

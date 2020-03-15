@@ -83,4 +83,13 @@ class Logger {
 
     sink.close();
   }
+
+  void writeLine(String str) async {
+    final file = await _localFile;
+    var sink = file.openWrite(mode: FileMode.append);
+
+    sink.write(str + '\n');
+
+    sink.close();
+  }
 }
