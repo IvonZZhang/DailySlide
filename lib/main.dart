@@ -17,7 +17,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Daily Slide',
       theme: ThemeData(
-        primarySwatch: Colors.red,
+//        primarySwatch: Colors.blueAccent[300],
+        primaryColor: Colors.blue[200]
       ),
       home: MyHomePage(title: 'Daily Slide'),
       routes: {
@@ -42,6 +43,9 @@ class _MyHomePageState extends State<MyHomePage> {
   final _formKey = new GlobalKey<FormState>();
   final _scaffoldKey = new GlobalKey<ScaffoldState>();
 
+  static final Color buttonColor = Colors.grey;
+  static final Color textColor = Colors.white;
+
   int patientNr = -1;
 
   @override
@@ -51,99 +55,103 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
+      backgroundColor: Color(0xFF474747),
       resizeToAvoidBottomPadding: false,
       drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              decoration: BoxDecoration(
+        child: Container(
+          decoration: new BoxDecoration(color: Color(0xFF474747)),
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              DrawerHeader(
+                decoration: BoxDecoration(
 //                color: Colors.blue,
-                image: DecorationImage(
-                  image: AssetImage('assets/KU_Leuven.png'),
-                  fit: BoxFit.cover,
+                  image: DecorationImage(
+                    image: AssetImage('assets/KU_Leuven.png'),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                child: Text(
+                  'Researcher page',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontStyle: FontStyle.italic,
+                    decoration: TextDecoration.underline,
+                  ),
                 ),
               ),
-              child: Text(
-                'Researcher page',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                  fontStyle: FontStyle.italic,
-                  decoration: TextDecoration.underline,
-                ),
-              ),
-            ),
-            ListTile(
-              leading: Icon(Icons.settings),
-              title: Text('Settings'),
-              onTap: () {
-                showDialog(
-                  context: context,
-                  barrierDismissible: true,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      content: Form(
-                        key: _formKey,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text('Please enter password:'),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: TextFormField(
-                                obscureText: true,
-                                validator: (value) {
-                                  if(value.isEmpty) {
-                                    return 'Please enter the password';
-                                  } else if (sha256.convert(utf8.encode(value)).toString() == '22eeb1a9473d7a35564b883ee49aaf21d3709642d5ade76b663b897cfeda924b') {
-                                    return null;
-                                  }
-                                  return 'Incorrect password';
-                                },
+              ListTile(
+                leading: Icon(Icons.settings, color: Colors.white70,),
+                title: Text('Settings', style: TextStyle(color: Colors.white),),
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    barrierDismissible: true,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        content: Form(
+                          key: _formKey,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text('Please enter password:'),
                               ),
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: FlatButton(
-                                    child: Text("CANCEL", style: TextStyle(color: Colors.red),),
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                  ),
+                              Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: TextFormField(
+                                  obscureText: true,
+                                  validator: (value) {
+                                    if(value.isEmpty) {
+                                      return 'Please enter the password';
+                                    } else if (sha256.convert(utf8.encode(value)).toString() == '22eeb1a9473d7a35564b883ee49aaf21d3709642d5ade76b663b897cfeda924b') {
+                                      return null;
+                                    }
+                                    return 'Incorrect password';
+                                  },
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: FlatButton(
-                                    child: Text("ENTER", style: TextStyle(color: Colors.red),),
-                                    onPressed: () {
-                                      if (_formKey.currentState.validate()) {
-                                        _navigateToSettingsPage(context);
-                                      }
-                                    },
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: FlatButton(
+                                      child: Text("CANCEL", style: TextStyle(color: Colors.red),),
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ],
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: FlatButton(
+                                      child: Text("ENTER", style: TextStyle(color: Colors.red),),
+                                      onPressed: () {
+                                        if (_formKey.currentState.validate()) {
+                                          _navigateToSettingsPage(context);
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    );
-                  });
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.arrow_back),
-              title: Text('Close'),
-              onTap: () => Navigator.pop(context),
-            )
-          ],
+                      );
+                    });
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.arrow_back, color: Colors.white70,),
+                title: Text('Close', style: TextStyle(color: Colors.white),),
+                onTap: () => Navigator.pop(context),
+              )
+            ],
+          ),
         ),
       ),
       body: Center(
@@ -161,7 +169,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     style: const TextStyle(fontSize: 40, color: Colors.white),
                   ),
                   padding: EdgeInsets.all(16.0),
-                  color: Colors.red,
+                  color: buttonColor,
                   onPressed: () {
                     Navigator.pushNamed(context, '/training', arguments: TrainingPageArguments(1, patientNr));
                   },
@@ -179,7 +187,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     style: const TextStyle(fontSize: 40, color: Colors.white),
                   ),
                   padding: EdgeInsets.all(16.0),
-                  color: Colors.red,
+                  color: buttonColor,
                   onPressed: () {
                     Navigator.pushNamed(context, '/training', arguments: TrainingPageArguments(2, patientNr));
                   },
@@ -197,7 +205,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     style: const TextStyle(fontSize: 40, color: Colors.white),
                   ),
                   padding: EdgeInsets.all(16.0),
-                  color: Colors.red,
+                  color: buttonColor,
                   onPressed: () {
                     Navigator.pushNamed(context, '/training', arguments: TrainingPageArguments(3, patientNr));
                   },
@@ -215,7 +223,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     style: const TextStyle(fontSize: 40, color: Colors.white),
                   ),
                   padding: EdgeInsets.all(16.0),
-                  color: Colors.red,
+                  color: buttonColor,
                   onPressed: () {
                     Navigator.pushNamed(context, '/training', arguments: TrainingPageArguments(4, patientNr));
                   },
@@ -253,4 +261,10 @@ class _MyHomePageState extends State<MyHomePage> {
 * Donetodo 4. Show how many times remaining.
 * Donetodo 5. Indicate patient on file name.
 * 6.
+* */
+
+/*
+* bg color:
+* disable back button during traininng
+* show the first circle
 * */

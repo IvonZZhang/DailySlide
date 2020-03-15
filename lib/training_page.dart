@@ -40,6 +40,19 @@ class TrainingPage extends StatefulWidget {
 
 class _TrainingPageState extends State<TrainingPage>
     with AfterLayoutMixin<TrainingPage> {
+
+  // Constants
+  static final int EXAMPLE_TIME_MS = 80;
+  static final int WAITING_TIME_MS = 1;
+  static final Color bgColor = Color(0xFF474747);
+  static final Color regularTextColor = Colors.blueGrey[50];
+  static final Color selectedCircleColor = Colors.blue[900];
+//  static final Color selectedCircleColor = Colors.black;
+  static final Color notSelectedCircleColor = Color(0xFF5F87C4);
+  static final Color feedbackTextColor = Colors.deepOrange;
+  static final Color exampleTextColor = Color(0xCF6188C4);
+  static final Color snackBarTextColor = Colors.white;
+
   // Nr of node left during showing
   int nodeLeft = 7;
 
@@ -47,7 +60,7 @@ class _TrainingPageState extends State<TrainingPage>
   List<int> tempPattern = [];
 
   // Seconds left during resting
-  int restSec = 14;
+  int restSec = WAITING_TIME_MS;
 
   Timer _timerPeriod;
   Timer _restTimerPeriod;
@@ -62,7 +75,7 @@ class _TrainingPageState extends State<TrainingPage>
   int trying = 1;
 
   // Text on the top for general notifications
-  Text notificationText = Text('Please look at the pattern on the left',style: TextStyle(fontSize: 46));
+  Text notificationText = Text('Please look at the pattern on the left',style: TextStyle(fontSize: 46, color: regularTextColor));
 
   // Text in the middle for feedback of a training
   Text feedbackText = Text(' ', style: TextStyle(fontSize: 30));
@@ -94,7 +107,7 @@ class _TrainingPageState extends State<TrainingPage>
   }
 
   void showPatternExample() => _timerPeriod =
-          new Timer.periodic(new Duration(milliseconds: 800), (Timer timer) {
+          new Timer.periodic(new Duration(milliseconds: EXAMPLE_TIME_MS), (Timer timer) {
         if (nodeLeft == 0) {
           _timerPeriod.cancel();
           nodeLeft = 7;
@@ -102,7 +115,7 @@ class _TrainingPageState extends State<TrainingPage>
 
           setState(() => notificationText = Text(
               'Please redo the pattern on the right',
-              style: TextStyle(fontSize: 46)));
+              style: TextStyle(fontSize: 46, color: regularTextColor)));
           isTraining = true;
           return;
         }
@@ -119,18 +132,18 @@ class _TrainingPageState extends State<TrainingPage>
         setState(() {
           notificationText = Text(
             'Take a rest: $restSec',
-            style: TextStyle(fontSize: 46),
+            style: TextStyle(fontSize: 46, color: regularTextColor),
           );
         });
 
         if (restSec == 0) {
           _restTimerPeriod.cancel();
-          restSec = 14;
+          restSec = WAITING_TIME_MS;
           tempPattern = [];
           setState(() {
             ++patternNr;
             notificationText = Text('Please look at the pattern',
-                style: TextStyle(fontSize: 46));
+                style: TextStyle(fontSize: 46, color: regularTextColor));
             feedbackText = Text(' ');
             showingPatternKey.currentState
                 .setState(() => showingPatternKey.currentState.setUsed([]));
@@ -220,6 +233,7 @@ class _TrainingPageState extends State<TrainingPage>
       appBar: AppBar(
         title: Text("Training"),
       ),
+      backgroundColor: bgColor,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
@@ -244,7 +258,8 @@ class _TrainingPageState extends State<TrainingPage>
                     children: <Widget>[
                       PatternLock(
                         key: showingPatternKey,
-                        selectedColor: Colors.amber,
+                        selectedColor: selectedCircleColor,
+                        notSelectedColor: notSelectedCircleColor,
                         pointRadius: 27,
                         fillPoints: true,
                         onInputComplete: (List<int> input, int duration) {},
@@ -260,7 +275,7 @@ class _TrainingPageState extends State<TrainingPage>
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 30,
-                              color: Colors.black54),
+                              color: exampleTextColor),
                         ),
                       ),
                     ],
@@ -273,7 +288,8 @@ class _TrainingPageState extends State<TrainingPage>
                       visible: isTraining,
                       child: PatternLock(
                         key: trainingPatternKey,
-                        selectedColor: Colors.amber,
+                        selectedColor: selectedCircleColor,
+                        notSelectedColor: notSelectedCircleColor,
                         pointRadius: 27,
                         fillPoints: true,
                         onInputComplete:
@@ -284,25 +300,25 @@ class _TrainingPageState extends State<TrainingPage>
                                     'Perfect!',
                                     style: TextStyle(
                                         fontSize: 30,
-                                        color: Colors.deepOrange,
+                                        color: feedbackTextColor,
                                         fontWeight: FontWeight.bold),
                                   )
                                 : Text(
                                     'Mistaken...',
                                     style: TextStyle(
                                         fontSize: 30,
-                                        color: Colors.red,
+                                        color: feedbackTextColor,
                                         fontWeight: FontWeight.bold),
                                   );
                             notificationText = trying % 2 == 0
                                 ? Text(
                                     'Please redo the pattern. Remaining: ' +
                                         (12 - trying).toString(),
-                                    style: TextStyle(fontSize: 46))
+                                    style: TextStyle(fontSize: 46, color: regularTextColor))
                                 : Text(
                                     'Please do it again.           Remaining: ' +
                                         (12 - trying).toString(),
-                                    style: TextStyle(fontSize: 46),
+                                    style: TextStyle(fontSize: 46, color: regularTextColor),
                                   );
                           });
 
@@ -319,7 +335,7 @@ class _TrainingPageState extends State<TrainingPage>
                                         'Training finished! Exit after syncing data...',
                                         style: TextStyle(
                                             fontSize: 30,
-                                            color: Colors.black,
+                                            color: regularTextColor,
                                             fontWeight: FontWeight.bold),
                                       )));
                               String syncInfo = await upload(args.patientNr) == 0 // DoneTODO: patientNr
@@ -330,7 +346,7 @@ class _TrainingPageState extends State<TrainingPage>
                                 SnackBar(
                                   content: Text(
                                     syncInfo,
-                                    style: TextStyle(color: Colors.red),
+                                    style: TextStyle(color: snackBarTextColor),
                                   ),
                                 ),
                               );
@@ -340,12 +356,12 @@ class _TrainingPageState extends State<TrainingPage>
                             }
                             setState(() {
                               notificationText = Text(
-                                'Take a rest: 14',
-                                style: TextStyle(fontSize: 46),
+                                'Take a rest: $WAITING_TIME_MS',
+                                style: TextStyle(fontSize: 46, color: regularTextColor),
                               );
                               feedbackText = Text(
                                 ' ',
-                                style: TextStyle(fontSize: 30),
+                                style: TextStyle(fontSize: 30, color: regularTextColor),
                               );
                             });
                             takeARest();

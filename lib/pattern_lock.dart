@@ -150,7 +150,7 @@ class _LockPainter extends CustomPainter {
           ..color = selectedColor
           ..style = fillPoints ? PaintingStyle.fill : PaintingStyle.stroke
           ..strokeCap = StrokeCap.round
-          ..strokeWidth = 2;
+          ..strokeWidth = 10;
 
   @override
   void paint(Canvas canvas, Size size) {
