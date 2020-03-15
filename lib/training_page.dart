@@ -47,7 +47,6 @@ class _TrainingPageState extends State<TrainingPage>
   static final Color bgColor = Color(0xFF474747);
   static final Color regularTextColor = Colors.blueGrey[50];
   static final Color selectedCircleColor = Colors.blue[900];
-//  static final Color selectedCircleColor = Colors.black;
   static final Color notSelectedCircleColor = Color(0xFF5F87C4);
   static final Color feedbackTextColor = Colors.deepOrange;
   static final Color exampleTextColor = Color(0xCF6188C4);
@@ -82,6 +81,9 @@ class _TrainingPageState extends State<TrainingPage>
 
   // Is training pattern touchable or not
   bool isTraining = false;
+
+  // Is example pattern is visible or not
+  bool isResting = false;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final trainingPatternKey = GlobalKey<PatternLockState>();
@@ -142,11 +144,11 @@ class _TrainingPageState extends State<TrainingPage>
           tempPattern = [];
           setState(() {
             ++patternNr;
+            isResting = false;
             notificationText = Text('Please look at the pattern',
                 style: TextStyle(fontSize: 46, color: regularTextColor));
             feedbackText = Text(' ');
-            showingPatternKey.currentState
-                .setState(() => showingPatternKey.currentState.setUsed([]));
+
           });
           new Timer(new Duration(seconds: 1), () {
             showPatternExample();
@@ -256,13 +258,16 @@ class _TrainingPageState extends State<TrainingPage>
                       child: Stack(
                     fit: StackFit.expand,
                     children: <Widget>[
-                      PatternLock(
-                        key: showingPatternKey,
-                        selectedColor: selectedCircleColor,
-                        notSelectedColor: notSelectedCircleColor,
-                        pointRadius: 27,
-                        fillPoints: true,
-                        onInputComplete: (List<int> input, int duration) {},
+                      Visibility(
+                        visible: !isResting,
+                        child: PatternLock(
+                          key: showingPatternKey,
+                          selectedColor: selectedCircleColor,
+                          notSelectedColor: notSelectedCircleColor,
+                          pointRadius: 27,
+                          fillPoints: true,
+                          onInputComplete: (List<int> input, int duration) {},
+                        ),
                       ),
                       Image(
                         image: AssetImage('assets/transparent.png')
@@ -270,12 +275,15 @@ class _TrainingPageState extends State<TrainingPage>
                       Positioned(
                         bottom: 40,
                         right: 200,
-                        child: Text(
-                          'Example',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 30,
-                              color: exampleTextColor),
+                        child: Visibility(
+                          visible: !isResting,
+                          child: Text(
+                            'Example',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 30,
+                                color: exampleTextColor),
+                          ),
                         ),
                       ),
                     ],
@@ -354,6 +362,7 @@ class _TrainingPageState extends State<TrainingPage>
                                   () => Navigator.pop(context));
                               return;
                             }
+
                             setState(() {
                               notificationText = Text(
                                 'Take a rest: $WAITING_TIME_MS',
@@ -363,6 +372,9 @@ class _TrainingPageState extends State<TrainingPage>
                                 ' ',
                                 style: TextStyle(fontSize: 30, color: regularTextColor),
                               );
+                              isResting = true;
+                              showingPatternKey.currentState
+                                .setState(() => showingPatternKey.currentState.setUsed([]));
                             });
                             takeARest();
                             trying = 1;
