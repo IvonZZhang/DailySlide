@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:after_layout/after_layout.dart';
 import 'package:connectivity/connectivity.dart';
+import 'package:daily_slide/training_page.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
@@ -29,13 +30,16 @@ class _LoadingPageState extends State<LoadingPage>
 
         if(taskSnapshot.error == null) {
           // Delete file
-          f.delete();
+          await f.delete();
         } else {
           print('Error during uploading!');
         }
 
       }
     }
+
+    final TrainingPageArguments args = ModalRoute.of(context).settings.arguments;
+    Navigator.pushReplacementNamed(context, '/training', arguments: args);
 
     return 0;
   }
@@ -59,16 +63,9 @@ class _LoadingPageState extends State<LoadingPage>
       backgroundColor: Color(0xFF474747),
       body: Container(
         alignment: Alignment.bottomRight,
-        padding: const EdgeInsets.all(40.0),
-        child: Row(
-          children: <Widget>[
-//            Transform.rotate(
-//              angle: 60,
-//              child: Icon(Icons.refresh, size: 40, color: Colors.black54,),
-//            ),
+        padding: const EdgeInsets.all(80.0),
+        child:
             Text('Please wait...', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black54, fontSize: 50),),
-          ],
-        ),
       ),
     );
   }

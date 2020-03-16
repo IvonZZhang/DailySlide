@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'pattern_lock.dart';
 import 'dart:async';
 import 'logger.dart';
@@ -43,8 +42,8 @@ class _TrainingPageState extends State<TrainingPage>
     with AfterLayoutMixin<TrainingPage> {
 
   // Constants
-  static final int EXAMPLE_TIME_MS = 80;
-  static final int WAITING_TIME_MS = 1;
+  static final int exampleTimeMs = 800;
+  static final int waitingTimeMs = 1;
 
   static final Color bgColor = Color(0xFF474747);
   static final Color regularTextColor = Colors.blueGrey[50];
@@ -61,7 +60,7 @@ class _TrainingPageState extends State<TrainingPage>
   List<int> tempPattern = [];
 
   // Seconds left during resting
-  int restSec = WAITING_TIME_MS;
+  int restSec = waitingTimeMs;
 
   Timer _timerPeriod;
   Timer _restTimerPeriod;
@@ -116,7 +115,7 @@ class _TrainingPageState extends State<TrainingPage>
   }
 
   void showPatternExample() => _timerPeriod =
-          new Timer.periodic(new Duration(milliseconds: EXAMPLE_TIME_MS), (Timer timer) {
+          new Timer.periodic(new Duration(milliseconds: exampleTimeMs), (Timer timer) {
         if (nodeLeft == 0) {
           _timerPeriod.cancel();
           nodeLeft = 7;
@@ -145,7 +144,7 @@ class _TrainingPageState extends State<TrainingPage>
           );
         });
 
-        if (restSec == (WAITING_TIME_MS - 1)) {
+        if (restSec == (waitingTimeMs - 1)) {
           setState(() {
             feedbackText = Text(
               ' ',
@@ -159,7 +158,7 @@ class _TrainingPageState extends State<TrainingPage>
 
         if (restSec == 0) {
           _restTimerPeriod.cancel();
-          restSec = WAITING_TIME_MS;
+          restSec = waitingTimeMs;
           tempPattern = [];
           setState(() {
             ++patternNr;
@@ -300,12 +299,15 @@ class _TrainingPageState extends State<TrainingPage>
             Positioned(
               top: 0,
               right: 0,
-              child: RaisedButton(
-                child: Text('Exit training', style: TextStyle(fontSize: 16, color: Colors.white70, fontWeight: FontWeight.bold),),
-                color: Colors.red,
-                onPressed: () {
-                  showExitDialog();
-                },)
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: RaisedButton(
+                  child: Text('Exit training', style: TextStyle(fontSize: 16, color: Colors.white70, fontWeight: FontWeight.bold),),
+                  color: Colors.red,
+                  onPressed: () {
+                    showExitDialog();
+                  },),
+              )
             ),
             Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -411,24 +413,24 @@ class _TrainingPageState extends State<TrainingPage>
                                   new Timer(
                                       Duration(seconds: 1),
                                       () => setState(() => feedbackText = Text(
-                                            'Training finished! Exit after syncing data...',
+                                            'Training finished! Exiting...',
                                             style: TextStyle(
                                                 fontSize: 30,
                                                 color: regularTextColor,
                                                 fontWeight: FontWeight.bold),
                                           )));
-                                  String syncInfo = await upload(args.patientNr) == 0 // DoneTODO: patientNr
-                                      ? 'Data sync successfully!'
-                                      : 'Data sync failed.';
-                                  scaffoldKey.currentState.hideCurrentSnackBar();
-                                  scaffoldKey.currentState.showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        syncInfo,
-                                        style: TextStyle(color: snackBarTextColor),
-                                      ),
-                                    ),
-                                  );
+//                                  String syncInfo = await upload(args.patientNr) == 0 // DoneTODO: patientNr
+//                                      ? 'Data sync successfully!'
+//                                      : 'Data sync failed.';
+//                                  scaffoldKey.currentState.hideCurrentSnackBar();
+//                                  scaffoldKey.currentState.showSnackBar(
+//                                    SnackBar(
+//                                      content: Text(
+//                                        syncInfo,
+//                                        style: TextStyle(color: snackBarTextColor),
+//                                      ),
+//                                    ),
+//                                  );
                                   new Timer(Duration(seconds: 2),
                                       () => Navigator.pop(context));
                                   return;
@@ -436,16 +438,9 @@ class _TrainingPageState extends State<TrainingPage>
 
                                 setState(() {
                                   notificationText = Text(
-                                    'Take a rest: $WAITING_TIME_MS',
+                                    'Take a rest: $waitingTimeMs',
                                     style: TextStyle(fontSize: 46, color: regularTextColor),
                                   );
-//                                  feedbackText = Text(
-//                                    ' ',
-//                                    style: TextStyle(fontSize: 30, color: regularTextColor),
-//                                  );
-//                                  isResting = true;
-//                                  showingPatternKey.currentState
-//                                    .setState(() => showingPatternKey.currentState.setUsed([]));
                                 });
                                 takeARest();
                                 trying = 1;

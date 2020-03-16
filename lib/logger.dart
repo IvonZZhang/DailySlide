@@ -50,7 +50,6 @@ class Logger {
   Future<int> writeFileHeader(int patientNr, int dayNr) async {
     final file = await _localFile;
     var sink = file.openWrite(mode: FileMode.write);
-    print(_filename + ' This is file name !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
 
     // Write the file
     sink.write('Patient No.$patientNr\n');

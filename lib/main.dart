@@ -190,7 +190,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   padding: EdgeInsets.all(16.0),
                   color: buttonColor,
                   onPressed: () {
-                    Navigator.pushNamed(context, '/training', arguments: TrainingPageArguments(2, patientNr));
+                    Navigator.pushNamed(context, '/loading', arguments: TrainingPageArguments(2, patientNr));
                   },
                 ),
               ),
@@ -208,7 +208,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   padding: EdgeInsets.all(16.0),
                   color: buttonColor,
                   onPressed: () {
-                    Navigator.pushNamed(context, '/training', arguments: TrainingPageArguments(3, patientNr));
+                    Navigator.pushNamed(context, '/loading', arguments: TrainingPageArguments(3, patientNr));
                   },
                 ),
               ),
@@ -226,7 +226,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   padding: EdgeInsets.all(16.0),
                   color: buttonColor,
                   onPressed: () {
-//                    Navigator.pushNamed(context, '/training', arguments: TrainingPageArguments(4, patientNr));
                     Navigator.pushNamed(context, '/loading', arguments: TrainingPageArguments(4, patientNr));
                   },
                 ),
