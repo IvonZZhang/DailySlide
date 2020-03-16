@@ -1,6 +1,10 @@
+import 'dart:io';
+import 'package:after_layout/after_layout.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as Path;
 
 class LoadingPage extends StatefulWidget {
 
@@ -9,18 +13,42 @@ class LoadingPage extends StatefulWidget {
   State createState() => _LoadingPageState();
 }
 
-class _LoadingPageState extends State<LoadingPage> {
+class _LoadingPageState extends State<LoadingPage>
+  with AfterLayoutMixin<LoadingPage> {
 
-//  Future<int> uploadToFirebase(int patientNr, int day) async {
-//    var date = DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
-//    String path = '/$patientNr/$patientNr $date Day$day.txt';
-//
-//    final StorageReference ref = FirebaseStorage().ref().child(path);
-//    var uploadTask = ref.putFile(await widget._logger.getLogFile());
-//    StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
-//
-//    return taskSnapshot.error == null ? 0 : -1;
-//  }
+  Future<int> uploadToFirebase() async {
+
+    Directory appDocDir = await getApplicationDocumentsDirectory();
+    await for (var f in appDocDir.list()) {
+      if (f.toString().endsWith('txt\'')) {
+        String filename = Path.basename(f.path);
+        int patientNr = int.parse(filename.split(' ').first);
+        final StorageReference ref = FirebaseStorage().ref().child('/$patientNr/$filename');
+        var uploadTask = ref.putFile(f);
+        StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
+
+        if(taskSnapshot.error == null) {
+          // Delete file
+          f.delete();
+        } else {
+          print('Error during uploading!');
+        }
+
+      }
+    }
+
+    return 0;
+  }
+
+  @override
+  void afterFirstLayout(BuildContext context) async {
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.wifi) {
+      await uploadToFirebase();
+    } else {
+      print('NO WIFI');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +60,15 @@ class _LoadingPageState extends State<LoadingPage> {
       body: Container(
         alignment: Alignment.bottomRight,
         padding: const EdgeInsets.all(40.0),
-        child: Text('Please wait...', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black54, fontSize: 50),),
+        child: Row(
+          children: <Widget>[
+//            Transform.rotate(
+//              angle: 60,
+//              child: Icon(Icons.refresh, size: 40, color: Colors.black54,),
+//            ),
+            Text('Please wait...', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black54, fontSize: 50),),
+          ],
+        ),
       ),
     );
   }

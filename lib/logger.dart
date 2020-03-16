@@ -5,7 +5,9 @@ import 'package:intl/intl.dart';
 class Logger {
   String _filename;
 
-  Logger(this._filename);
+  set filename(String filename) {
+    _filename = filename;
+  }
 
   Future<String> get _localPath async {
     final directory = await getApplicationDocumentsDirectory();
@@ -45,9 +47,10 @@ class Logger {
     }
   }
 
-  void writeFileHeader(int patientNr, int dayNr) async {
+  Future<int> writeFileHeader(int patientNr, int dayNr) async {
     final file = await _localFile;
     var sink = file.openWrite(mode: FileMode.write);
+    print(_filename + ' This is file name !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
 
     // Write the file
     sink.write('Patient No.$patientNr\n');
@@ -55,15 +58,17 @@ class Logger {
     sink.write('Training data of Day $dayNr:\n');
 
     sink.close();
+    return 0;
   }
 
-  void writePatternNr(int patternNr) async {
+  Future<int> writePatternNr(int patternNr) async {
     final file = await _localFile;
     var sink = file.openWrite(mode: FileMode.append);
 
     sink.write('\nPattern $patternNr\n');
 
     sink.close();
+    return 0;
   }
 
   Future<int> writeTrainingResult(int nrOfTrying, bool isSuccess, int duration) async {
@@ -76,21 +81,23 @@ class Logger {
     return 0;
   }
 
-  void writeFileFooter() async {
+  Future<int> writeFileFooter() async {
     final file = await _localFile;
     var sink = file.openWrite(mode: FileMode.append);
 
     sink.write('\n******End of training******\n');
 
     sink.close();
+    return 0;
   }
 
-  void writeLine(String str) async {
+  Future<int> writeLine(String str) async {
     final file = await _localFile;
     var sink = file.openWrite(mode: FileMode.append);
 
     sink.write(str + '\n');
 
     sink.close();
+    return 0;
   }
 }

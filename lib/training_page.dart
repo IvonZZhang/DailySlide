@@ -33,7 +33,7 @@ class TrainingPage extends StatefulWidget {
     [1, 3, 1, 2, 3, 3, 2, 2, 1]
   ];
 
-  final Logger _logger = Logger('log_cache');
+  final Logger _logger = Logger();
 
   @override
   _TrainingPageState createState() => _TrainingPageState();
@@ -106,9 +106,12 @@ class _TrainingPageState extends State<TrainingPage>
   }
 
   @override
-  void afterFirstLayout(BuildContext context) {
+  void afterFirstLayout(BuildContext context) async {
     final TrainingPageArguments args = ModalRoute.of(context).settings.arguments;
-    widget._logger.writeFileHeader(args.patientNr, day); // DoneTODO: patient nr
+    var date = DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
+    var patientNr = args.patientNr;
+    widget._logger.filename = '$patientNr $date Day$day';
+    await widget._logger.writeFileHeader(args.patientNr, day); // DoneTODO: patient nr
     showPatternExample();
   }
 
@@ -265,9 +268,9 @@ class _TrainingPageState extends State<TrainingPage>
             ),
             FlatButton(
               child: Text('YES'),
-              onPressed: () {
-                widget._logger.writeLine('Training stopped by emergency button.');
-                widget._logger.writeFileFooter();
+              onPressed: () async {
+                await widget._logger.writeLine('Training stopped by emergency button.');
+                await widget._logger.writeFileFooter();
                 // TODO: sync
                 Navigator.of(context).popUntil(ModalRoute.withName('/'));
 //                            SystemChannels.platform.invokeMethod('SystemNavigator.pop');
@@ -404,7 +407,7 @@ class _TrainingPageState extends State<TrainingPage>
                               if (trying == 12) {
                                 isTraining = false;
                                 if (patternNr == 1) {
-                                  widget._logger.writeFileFooter();
+                                  await widget._logger.writeFileFooter();
                                   new Timer(
                                       Duration(seconds: 1),
                                       () => setState(() => feedbackText = Text(
