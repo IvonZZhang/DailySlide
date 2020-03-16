@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:daily_slide/loading_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
@@ -24,6 +24,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/training': (context) => TrainingPage(),
         '/settings': (context) => SettingsPage(),
+        '/loading' : (context) => LoadingPage(),
       },
     );
   }
@@ -225,7 +226,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   padding: EdgeInsets.all(16.0),
                   color: buttonColor,
                   onPressed: () {
-                    Navigator.pushNamed(context, '/training', arguments: TrainingPageArguments(4, patientNr));
+//                    Navigator.pushNamed(context, '/training', arguments: TrainingPageArguments(4, patientNr));
+                    Navigator.pushNamed(context, '/loading', arguments: TrainingPageArguments(4, patientNr));
                   },
                 ),
               ),

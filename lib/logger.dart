@@ -8,7 +8,7 @@ class Logger {
   Logger(this._filename);
 
   Future<String> get _localPath async {
-    final directory = await getApplicationSupportDirectory(); // DoneTODO: change to cache
+    final directory = await getApplicationDocumentsDirectory();
     return directory.path;
   }
 
@@ -66,13 +66,14 @@ class Logger {
     sink.close();
   }
 
-  void writeTrainingResult(int nrOfTrying, bool isSuccess, int duration) async {
+  Future<int> writeTrainingResult(int nrOfTrying, bool isSuccess, int duration) async {
     final file = await _localFile;
     var sink = file.openWrite(mode: FileMode.append);
 
     sink.write('Trying$nrOfTrying ${isSuccess ? 1 : 0} $duration\n');
 
     sink.close();
+    return 0;
   }
 
   void writeFileFooter() async {

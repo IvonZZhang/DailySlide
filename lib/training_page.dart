@@ -44,7 +44,7 @@ class _TrainingPageState extends State<TrainingPage>
 
   // Constants
   static final int EXAMPLE_TIME_MS = 80;
-  static final int WAITING_TIME_MS = 14;
+  static final int WAITING_TIME_MS = 1;
 
   static final Color bgColor = Color(0xFF474747);
   static final Color regularTextColor = Colors.blueGrey[50];
@@ -398,12 +398,12 @@ class _TrainingPageState extends State<TrainingPage>
                                       );
                               });
 
-                              widget._logger.writeTrainingResult(trying,
+                              await widget._logger.writeTrainingResult(trying,
                                   listEquals(input, tempPattern), duration);
 
                               if (trying == 12) {
                                 isTraining = false;
-                                if (patternNr == 8) {
+                                if (patternNr == 1) {
                                   widget._logger.writeFileFooter();
                                   new Timer(
                                       Duration(seconds: 1),
