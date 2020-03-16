@@ -407,7 +407,7 @@ class _TrainingPageState extends State<TrainingPage>
 
                               if (trying == 12) {
                                 isTraining = false;
-                                if (patternNr == 1) {
+                                if (patternNr == 8) {
                                   await widget._logger.writeFileFooter();
                                   new Timer(
                                       Duration(seconds: 1),
