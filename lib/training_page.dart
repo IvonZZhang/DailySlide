@@ -270,7 +270,6 @@ class _TrainingPageState extends State<TrainingPage>
               onPressed: () async {
                 await widget._logger.writeLine('Training stopped by emergency button.');
                 await widget._logger.writeFileFooter();
-                // TODO: sync
                 Navigator.of(context).popUntil(ModalRoute.withName('/'));
 //                            SystemChannels.platform.invokeMethod('SystemNavigator.pop');
               },

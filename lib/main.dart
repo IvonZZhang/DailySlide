@@ -297,13 +297,13 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-// TODO: change the font, color...
+// DoneTODO: change the font, color...
 // TODO: Show feedback at the end of training.
 // DoneTODO: block the training every 12 hours
 // DoneTODO: tip, other help info...
 // DoneTODO: preference of dropbox account name?
 // DoneTODO: speed of showing the pattern?
-// TODO: block back and menu during training
+// DoneTODO: block back and menu during training
 
 /*
 * Donetodo 1. Show the pattern always on the side.
