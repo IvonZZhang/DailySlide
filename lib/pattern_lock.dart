@@ -166,6 +166,16 @@ class _LockPainter extends CustomPainter {
               ? selectedPaint
               : circlePaint,
         );
+
+        if(i == 2 && j == 1) {
+          canvas.drawCircle(
+            circlePosition(i * dimension + j),
+            pointRadius, Paint()
+            ..color = Colors.black87
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = 3,
+          );
+        }
       }
     }
 
