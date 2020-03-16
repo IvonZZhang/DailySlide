@@ -1,12 +1,17 @@
 import 'dart:convert';
+import 'dart:io';
+import 'package:connectivity/connectivity.dart';
 import 'package:daily_slide/loading_page.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+import 'package:path_provider/path_provider.dart';
 import 'training_page.dart';
 import 'package:flutter/services.dart';
 import 'settings_page.dart';
 import 'package:crypto/crypto.dart';
+import 'package:path/path.dart' as Path;
 
 void main() => runApp(MyApp());
 
@@ -144,6 +149,52 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       );
                     });
+                },
+              ),
+              ListTile(
+                title: Text('Sync Data', style: TextStyle(color: Colors.white),),
+                leading: Icon(Icons.sync, color: Colors.white70,),
+                onTap: () async {
+                  Navigator.pop(context);
+                  String syncInfo = 'Data sync successfully!';
+                  var connectivityResult = await (Connectivity().checkConnectivity());
+                  if(connectivityResult == ConnectivityResult.wifi) {
+                    Directory appDocDir = await getApplicationDocumentsDirectory();
+                    await for (var f in appDocDir.list()) {
+                      if (f.toString().endsWith('txt\'')) {
+                        String filename = Path.basename(f.path);
+                        try {
+                          int patientNr = int.parse(filename.split(' ').first);
+                          final StorageReference ref = FirebaseStorage().ref().child('/$patientNr/$filename');
+                          var uploadTask = ref.putFile(f);
+                          StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
+
+                          if(taskSnapshot.error == null) {
+                            // Delete file
+                            await f.delete();
+                          } else {
+                            print('Error during uploading!');
+                          }
+                        } catch (Exception) {
+                          print(Exception.toString());
+                          syncInfo = 'Something went wrong! Data might not fully uploaded...';
+                        }
+                      }
+                    }
+                  } else {
+                    syncInfo = 'No internet!';
+                  }
+
+                  _scaffoldKey.currentState.hideCurrentSnackBar();
+                  _scaffoldKey.currentState.showSnackBar(
+                    SnackBar(
+                      behavior: SnackBarBehavior.floating,
+                      content: Text(
+                        syncInfo,
+                        style: TextStyle(color: Colors.white70),
+                      ),
+                    ),
+                  );
                 },
               ),
               ListTile(

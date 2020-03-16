@@ -23,23 +23,24 @@ class _LoadingPageState extends State<LoadingPage>
     await for (var f in appDocDir.list()) {
       if (f.toString().endsWith('txt\'')) {
         String filename = Path.basename(f.path);
-        int patientNr = int.parse(filename.split(' ').first);
-        final StorageReference ref = FirebaseStorage().ref().child('/$patientNr/$filename');
-        var uploadTask = ref.putFile(f);
-        StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
+        try {
+          int patientNr = int.parse(filename.split(' ').first);
+          final StorageReference ref = FirebaseStorage().ref().child('/$patientNr/$filename');
+          var uploadTask = ref.putFile(f);
+          StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
 
-        if(taskSnapshot.error == null) {
-          // Delete file
-          await f.delete();
-        } else {
-          print('Error during uploading!');
+          if(taskSnapshot.error == null) {
+            // Delete file
+            await f.delete();
+          } else {
+            print('Error during uploading!');
+          }
+        } catch (Exception) {
+          print(Exception.toString());
         }
 
       }
     }
-
-    final TrainingPageArguments args = ModalRoute.of(context).settings.arguments;
-    Navigator.pushReplacementNamed(context, '/training', arguments: args);
 
     return 0;
   }
@@ -49,9 +50,15 @@ class _LoadingPageState extends State<LoadingPage>
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.wifi) {
       await uploadToFirebase();
+//      Directory appDocDir = await getApplicationDocumentsDirectory();
+//      await for(var f in appDocDir.list()){
+//        print(f.toString());
+//      }
     } else {
       print('NO WIFI');
     }
+    final TrainingPageArguments args = ModalRoute.of(context).settings.arguments;
+    Navigator.pushReplacementNamed(context, '/training', arguments: args);
   }
 
   @override

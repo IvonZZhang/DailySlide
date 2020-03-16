@@ -43,7 +43,7 @@ class _TrainingPageState extends State<TrainingPage>
 
   // Constants
   static final int exampleTimeMs = 800;
-  static final int waitingTimeMs = 1;
+  static final int waitingTimeMs = 14;
 
   static final Color bgColor = Color(0xFF474747);
   static final Color regularTextColor = Colors.blueGrey[50];
