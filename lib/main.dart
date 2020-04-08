@@ -6,7 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'training_page.dart';
 import 'package:flutter/services.dart';
 import 'settings_page.dart';
@@ -61,7 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      backgroundColor: Color(0xFF474747),
+      backgroundColor: Color(0xFF5C5C5C),
       resizeToAvoidBottomPadding: false,
       drawer: Drawer(
         child: Container(
@@ -159,10 +159,32 @@ class _MyHomePageState extends State<MyHomePage> {
                   String syncInfo = 'Data sync successfully!';
                   var connectivityResult = await (Connectivity().checkConnectivity());
                   if(connectivityResult == ConnectivityResult.wifi) {
-                    Directory appDocDir = await getApplicationDocumentsDirectory();
+                    // Check storage permission
+                    PermissionStatus permission = await PermissionHandler().checkPermissionStatus(PermissionGroup.storage);
+                    print('Permission is ${permission.value}');
+                    if(permission.value != PermissionStatus.granted.value) {
+                      await PermissionHandler().requestPermissions([PermissionGroup.storage]);
+                    }
+
+                    final dirUploaded = '/storage/emulated/0/PDlab/';
+                    if(! await Directory(dirUploaded).exists()) {
+                      await Directory(dirUploaded).create(recursive: true);
+                    }
+
+                    if(! await Directory('/storage/emulated/0/PDlab/temp/').exists()) {
+                      await Directory('/storage/emulated/0/PDlab/temp/').create(recursive: true);
+                    }
+
+                    Directory appDocDir = Directory('/storage/emulated/0/PDlab/temp/');
                     await for (var f in appDocDir.list()) {
                       if (f.toString().endsWith('txt\'')) {
                         String filename = Path.basename(f.path);
+                        print('File under process: $filename');
+                        if(filename == 'null.txt') {
+                          debugPrint('null found!');
+                          f.delete();
+                          continue;
+                        }
                         try {
                           int patientNr = int.parse(filename.split(' ').first);
                           final StorageReference ref = FirebaseStorage().ref().child('/$patientNr/$filename');
@@ -170,14 +192,18 @@ class _MyHomePageState extends State<MyHomePage> {
                           StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
 
                           if(taskSnapshot.error == null) {
-                            // Delete file
+                            // Move file in temp directory to external directory and delete it
+                            File('/storage/emulated/0/PDlab/temp/$filename').copySync('/storage/emulated/0/PDlab/$filename');
                             await f.delete();
+                            print('Upload successful!');
                           } else {
                             print('Error during uploading!');
                           }
                         } catch (Exception) {
                           print(Exception.toString());
-                          syncInfo = 'Something went wrong! Data might not fully uploaded...';
+                          print('Something went wrong! Data might not fully uploaded...');
+//                          syncInfo = 'Something went wrong! Data might not fully uploaded...';
+                          continue;
                         }
                       }
                     }

@@ -45,12 +45,12 @@ class _TrainingPageState extends State<TrainingPage>
   static final int exampleTimeMs = 800;
   static final int waitingTimeMs = 14;
 
-  static final Color bgColor = Color(0xFF474747);
+  static final Color bgColor = Color(0xFF5C5C5C);
   static final Color regularTextColor = Colors.blueGrey[50];
-  static final Color selectedCircleColor = Colors.blue[900];
-  static final Color notSelectedCircleColor = Color(0xFF5F87C4);
+  static final Color selectedCircleColor = Color(0xFF092E6B);
+  static final Color notSelectedCircleColor = Color(0xFFA0B8DC);
   static final Color feedbackTextColor = Colors.deepOrange;
-  static final Color exampleTextColor = Color(0xCF6188C4);
+  static final Color exampleTextColor = Color(0xCF092E6B);
   static final Color snackBarTextColor = Colors.white;
 
   // Nr of node left during showing
@@ -91,11 +91,6 @@ class _TrainingPageState extends State<TrainingPage>
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final trainingPatternKey = GlobalKey<PatternLockState>();
   final showingPatternKey = GlobalKey<PatternLockState>();
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   void setState(VoidCallback fn) {
@@ -183,10 +178,6 @@ class _TrainingPageState extends State<TrainingPage>
     if (_restTimerPeriod != null) {
       _restTimerPeriod.cancel();
     }
-//    widget._logger.writeFileFooter();
-//    upload(66);
-//    widget._logger.readLog().then((value) => print(value));
-//    uploadToFirebase(33);
   }
 
   Future<int> upload(int patientNr) async {
@@ -248,13 +239,13 @@ class _TrainingPageState extends State<TrainingPage>
       context: context,
       barrierDismissible: true,
       builder: (BuildContext context) {
+        widget._logger.writeLine('Emergency button pushed.');
         return AlertDialog(
           title: Text('Are you sure to exit?'),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
                 Text('The unfinished training will not be counted.'),
-//                            Text('You\’re like me. I’m never satisfied.'),
               ],
             ),
           ),
@@ -271,7 +262,6 @@ class _TrainingPageState extends State<TrainingPage>
                 await widget._logger.writeLine('Training stopped by emergency button.');
                 await widget._logger.writeFileFooter();
                 Navigator.of(context).popUntil(ModalRoute.withName('/'));
-//                            SystemChannels.platform.invokeMethod('SystemNavigator.pop');
               },
             )
           ],
@@ -311,16 +301,25 @@ class _TrainingPageState extends State<TrainingPage>
             Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              Flexible(
-                flex: 2,
-                child: notificationText,
-              ),
-              Flexible(
+              Spacer(
                 flex: 1,
-                child: feedbackText,
               ),
               Flexible(
                 flex: 4,
+                child:
+                  Column(
+                    children: <Widget>[
+                      notificationText,
+                      Text(isTraining?'Do this as fast and accurately as possible':'', style: TextStyle(fontSize: 30, color: regularTextColor),),
+                    ],
+                  ),
+              ),
+              Flexible(
+                flex: 4,
+                child: feedbackText,
+              ),
+              Flexible(
+                flex: 12,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
