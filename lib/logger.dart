@@ -1,6 +1,6 @@
 import 'dart:io';
-import 'package:path_provider/path_provider.dart';
 import 'package:intl/intl.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class Logger {
   String _filename;
@@ -10,7 +10,32 @@ class Logger {
   }
 
   Future<String> get _localPath async {
-    final directory = await getApplicationDocumentsDirectory();
+//    final directory = await getExternalStorageDirectory();
+    /*
+    * ExternalStorageDirectory: /storage/emulated/0/Android/data/com.ivonzhang.daily_slide/files
+    * ExternalStorageDirectories: /storage/emulated/0/Android/data/com.ivonzhang.daily_slide/files
+    *                             /storage/18FC-0419/Android/data/com.ivonzhang.daily_slide/files
+    * ApplicationSupportDirectory: /data/user/0/com.ivonzhang.daily_slide/files
+    * ApplicationDocumentsDirectory: /data/user/0/com.ivonzhang.daily_slide/app_flutter
+    * TemporaryDirectory: /data/user/0/com.ivonzhang.daily_slide/cache
+    * DownloadsDirectory: Unsupported operation: Functionality not available on Android
+    *
+    */
+    // Check storage permission
+    PermissionStatus permission = await PermissionHandler().checkPermissionStatus(PermissionGroup.storage);
+    print('Permission is ${permission.value}');
+    if(permission.value != PermissionStatus.granted.value) {
+      await PermissionHandler().requestPermissions([PermissionGroup.storage]);
+    }
+
+    Directory directory = Directory('/storage/emulated/0/PDlab/temp/');
+
+    if(! await directory.exists()) {
+      await directory.create(recursive: true);
+    }
+
+
+
     return directory.path;
   }
 
@@ -99,4 +124,5 @@ class Logger {
     sink.close();
     return 0;
   }
+
 }
