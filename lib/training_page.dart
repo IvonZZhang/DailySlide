@@ -1,14 +1,9 @@
-import 'dart:convert';
-
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'pattern_lock.dart';
 import 'dart:async';
 import 'logger.dart';
 import 'package:after_layout/after_layout.dart';
-import 'package:http/http.dart' as http;
-import 'dart:io';
 import 'package:intl/intl.dart';
 
 class TrainingPageArguments {
@@ -320,7 +315,7 @@ class _TrainingPageState extends State<TrainingPage>
                         padding: const EdgeInsets.symmetric(horizontal: 16.0),
                         child: notificationText,
                       ),
-                      Text(isTraining?'Doe dit zo snel en accuraat als mogelijk.':'', style: TextStyle(fontSize: 30, color: Colors.white54),),
+                      Text(isTraining?'Doe dit zo snel en accuraat als mogelijk.':'', style: TextStyle(fontSize: 30, color: regularTextColor),),
                     ],
                   ),
               ),
