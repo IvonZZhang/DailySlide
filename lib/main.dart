@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
     return MaterialApp(
-      title: 'Daily Slide',
+      title: 'Daily Slide NL',
       theme: ThemeData(
 //        primarySwatch: Colors.blueAccent[300],
         primaryColor: Colors.blue[200]
