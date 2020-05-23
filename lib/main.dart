@@ -315,7 +315,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   _navigateToSettingsPage(BuildContext context) async {
-    final result = await Navigator.pushNamed(context, '/settings');
+    final result = await Navigator.pushNamed(context, '/settings', arguments: SettingsPageArguments(patientNr));
     if(result != null) {
       patientNr = result;
     }
