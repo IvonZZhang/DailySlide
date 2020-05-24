@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'training_page.dart';
 import 'package:flutter/services.dart';
 import 'settings_page.dart';
@@ -52,7 +53,19 @@ class _MyHomePageState extends State<MyHomePage> {
   static final Color buttonColor = Colors.grey;
   static final Color textColor = Colors.white;
 
-  int patientNr = -1;
+  int patientNr;
+
+  @override
+  void initState() {
+      () async {
+      await Future.delayed(Duration.zero);
+      final prefs = await SharedPreferences.getInstance();
+      patientNr = prefs.getInt('patientNr') ?? -2;
+    }();
+
+    print('Got patient Nr in initState() is $patientNr\n');
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -318,6 +331,8 @@ class _MyHomePageState extends State<MyHomePage> {
     final result = await Navigator.pushNamed(context, '/settings', arguments: SettingsPageArguments(patientNr));
     if(result != null) {
       patientNr = result;
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setInt('patientNr', patientNr);
     }
     Navigator.pop(context);
   }
