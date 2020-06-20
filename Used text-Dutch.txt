@@ -1,0 +1,38 @@
+These are all the text used for patients. Please add correspondant desired text in Dutch below each line. It does not have to be an exact translation but should be what you think it is the best to put there. If you think punctuations are important, please also put that down as well.
+
+e.g.
+- Yes
+Ja
+- No
+Nee
+
+- Example
+Voorbeeld
+- Please look at the pattern on the left.
+Kijk naar het voorbeeldpatroon aan de linkerkant van het scherm.
+- Please redo the pattern on the right.
+Probeer dit patroon na te maken aan de rechterkant van het scherm.
+- Take a rest: (counting down number here)
+Even rust:
+- Please look at the pattern.
+Kijk naar het patroon.
+- Are you sure to exit?
+Bent u zeker dat u het programma wil afsluiten?
+- The unfinished training will not be counted.
+De onvoltooide training zal niet worden geregistreerd.
+- Exit training
+Exit training
+- Do this as fast and accurately as possible.
+Doe dit zo snel en accuraat als mogelijk.
+- Perfect!
+Perfect!
+- Mistaken...
+Helaas niet helemaal juist...
+- Please redo the pattern. Remaining: (a number here)
+Probeer dit patroon na te maken. Resterende herhalingen:
+- Please do it again. Remaining: (a number here)
+Probeer dit patroon nogmaals na te maken. Resterende herhalingen:
+- Training finished! Exiting...
+Trainig voltooid! Exiting...
+- Please wait... (in loading page)
+Even geduld...
