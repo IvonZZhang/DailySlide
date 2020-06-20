@@ -99,7 +99,7 @@ class _LoadingPageState extends State<LoadingPage>
           alignment: Alignment.bottomRight,
           padding: const EdgeInsets.all(80.0),
           child:
-              Text('Even geduld...', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black54, fontSize: 50),),
+              Text('Loading...', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black54, fontSize: 50),),
         ),
       ),
     );

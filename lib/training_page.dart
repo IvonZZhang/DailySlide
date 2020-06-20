@@ -37,8 +37,8 @@ class _TrainingPageState extends State<TrainingPage>
     with AfterLayoutMixin<TrainingPage> {
 
   // Constants
-  static final int exampleTimeMs = 80; // 800
-  static final int waitingTimeMs = 2; // 14
+  static final int exampleTimeMs = 800; // 800
+  static final int waitingTimeMs = 14; // 14
   static final double notificationTextSize = 30.0;
   static final double restNotificationTextSize = 46.0;
   static final double remainingNrTextSize = 20.0;
@@ -77,7 +77,7 @@ class _TrainingPageState extends State<TrainingPage>
   int nrOfCorrectTrial = 0;
 
   // Text on the top for general notifications
-  Text notificationText = Text('Probeer dit patroon zo snel en accuraat mogelijk na\n te maken aan de rechterkant van het scherm.',
+  Text notificationText = Text('Try to recreate this pattern as quickly and accurately\n as possible on the right side of the screen.',
                                 style: TextStyle(fontSize: notificationTextSize, color: regularTextColor),
                                 textAlign: TextAlign.center,);
 
@@ -124,7 +124,7 @@ class _TrainingPageState extends State<TrainingPage>
           widget._logger.writePatternNr(patternNr + 1);
           setState(() {
             // This setState() must be here to refresh and let show right pattern.
-            remainingNrText = Text('\nPatroon: 12/12', style: TextStyle(
+            remainingNrText = Text('\nPattern: 12/12', style: TextStyle(
               color: regularTextColor, fontSize: remainingNrTextSize,
             ),);
           });
@@ -148,8 +148,8 @@ class _TrainingPageState extends State<TrainingPage>
           style: TextStyle(fontSize: feedbackTextSize, color: regularTextColor),
           children: <TextSpan>[
             TextSpan(text: '\nFeedback\n\n\n\n', style: TextStyle(fontWeight: FontWeight.bold)),
-            TextSpan(text: '$nrOfCorrectTrial van de 12 patronen werden perfect gevormd\n'),
-            TextSpan(text: (12-nrOfCorrectTrial).toString() + ' van de 12 patronen waren helaas niet helemaal juist.'),
+            TextSpan(text: '$nrOfCorrectTrial of the 12 patterns were perfectly formed\n'),
+            TextSpan(text: (12-nrOfCorrectTrial).toString() + ' of the 12 patterns unfortunately were not entirely correct.'),
           ],
         ),
       );
@@ -160,7 +160,7 @@ class _TrainingPageState extends State<TrainingPage>
       --restSec;
       setState(() {
         notificationText = Text(
-          'Even rust: $restSec',
+          'Take a rest: $restSec',
           style: TextStyle(fontSize: restNotificationTextSize, color: regularTextColor),
           textAlign: TextAlign.center,
         );
@@ -180,7 +180,7 @@ class _TrainingPageState extends State<TrainingPage>
         setState(() {
           ++patternNr;
           isResting = false;
-          notificationText = Text('Probeer dit patroon zo snel en accuraat mogelijk na\n te maken aan de rechterkant van het scherm.',
+          notificationText = Text('Try to recreate this pattern as quickly and accurately\n as possible on the right side of the screen.',
             style: TextStyle(fontSize: notificationTextSize, color: regularTextColor),
             textAlign: TextAlign.center,);
           feedbackText = Text(' ');
@@ -211,11 +211,11 @@ class _TrainingPageState extends State<TrainingPage>
       builder: (BuildContext context) {
         widget._logger.writeLine('Emergency button pushed.');
         return AlertDialog(
-          title: Text('Bent u zeker dat u het programma wil afsluiten?'),
+          title: Text('Are you sure you want to exit the program?'),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text('De onvoltooide training zal niet worden geregistreerd.'),
+                Text('The unfinished training will not be recorded.'),
               ],
             ),
           ),
@@ -305,7 +305,7 @@ class _TrainingPageState extends State<TrainingPage>
                             child: Visibility(
                               visible: !isResting,
                               child: Text(
-                                'Voorbeeld',
+                                'Example',
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 30,
@@ -330,7 +330,7 @@ class _TrainingPageState extends State<TrainingPage>
                             onInputComplete:
                                 (List<int> input, int duration) async {
                               setState(() {
-                                remainingNrText = Text('\nPatroon: ' + (12-trying).toString() + '/12', style: TextStyle(
+                                remainingNrText = Text('\nPattern: ' + (12-trying).toString() + '/12', style: TextStyle(
                                   color: regularTextColor, fontSize: remainingNrTextSize,
                                 ),);
                               });
@@ -348,7 +348,7 @@ class _TrainingPageState extends State<TrainingPage>
                                   new Timer(
                                       Duration(seconds: 1),
                                       () => setState(() => feedbackText = Text(
-                                            'Training voltooid! Exiting...',
+                                            'Training finished! Exiting...',
                                             style: TextStyle(
                                                 fontSize: 30,
                                                 color: regularTextColor,
@@ -362,7 +362,7 @@ class _TrainingPageState extends State<TrainingPage>
 
                                 setState(() {
                                   notificationText = Text(
-                                    'Even rust: $waitingTimeMs',
+                                    'Take a rest: $waitingTimeMs',
                                     style: TextStyle(fontSize: restNotificationTextSize, color: regularTextColor),
                                     textAlign: TextAlign.center,
                                   );
