@@ -141,6 +141,7 @@ class _TrainingPageState extends State<TrainingPage>
 
   void takeARest() {
     setState(() {
+      isResting = true;
       remainingNrText = Text(' ');
     });
 
@@ -161,7 +162,7 @@ class _TrainingPageState extends State<TrainingPage>
 //              ' ',
 //              style: TextStyle(fontSize: 30, color: regularTextColor),
 //            );
-          isResting = true;
+
           showingPatternKey.currentState
             .setState(() => showingPatternKey.currentState.setUsed([]));
         });
