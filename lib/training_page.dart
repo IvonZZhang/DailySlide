@@ -37,8 +37,8 @@ class _TrainingPageState extends State<TrainingPage>
     with AfterLayoutMixin<TrainingPage> {
 
   // Constants
-  static final int exampleTimeMs = 80; // 800
-  static final int waitingTimeMs = 2; // 14
+  static final int exampleTimeMs = 800; // 800
+  static final int waitingTimeMs = 14; // 14
   static final double notificationTextSize = 30.0;
   static final double restNotificationTextSize = 46.0;
   static final double remainingNrTextSize = 20.0;
