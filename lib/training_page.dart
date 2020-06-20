@@ -37,11 +37,12 @@ class _TrainingPageState extends State<TrainingPage>
     with AfterLayoutMixin<TrainingPage> {
 
   // Constants
-  static final int exampleTimeMs = 800; // 800
-  static final int waitingTimeMs = 14; // 14
+  static final int exampleTimeMs = 80; // 800
+  static final int waitingTimeMs = 2; // 14
   static final double notificationTextSize = 30.0;
   static final double restNotificationTextSize = 46.0;
   static final double remainingNrTextSize = 20.0;
+  static final double feedbackTextSize = 33.0;
 
   static final Color bgColor = Color(0xFF5C5C5C);
   static final Color regularTextColor = Colors.blueGrey[50];
@@ -72,6 +73,9 @@ class _TrainingPageState extends State<TrainingPage>
   // The nr of trying (max 12)
   int trying = 1;
 
+  // The nr of correctly redrawn trials in a set
+  int nrOfCorrectTrial = 0;
+
   // Text on the top for general notifications
   Text notificationText = Text('Probeer dit patroon zo snel en accuraat mogelijk na\n te maken aan de rechterkant van het scherm.',
                                 style: TextStyle(fontSize: notificationTextSize, color: regularTextColor),
@@ -80,8 +84,8 @@ class _TrainingPageState extends State<TrainingPage>
   // Text at top right corner showing remaining nr of trials
   Text remainingNrText = Text(' ');
 
-  // Text in the middle for feedback of a training
-//  Text feedbackText = Text(' ', style: TextStyle(fontSize: 33));
+  // Feedback showing during resting
+  Text feedbackText = Text(' ');
 
   // Is training pattern touchable or not
   bool isTraining = false;
@@ -125,10 +129,6 @@ class _TrainingPageState extends State<TrainingPage>
             ),);
           });
 
-//          setState(() => notificationText = Text(
-//              'Probeer dit patroon zo snel en accuraat mogelijk na te maken aan de rechterkant van het scherm.',
-//              style: TextStyle(fontSize: notificationTextSize, color: regularTextColor),
-//              textAlign: TextAlign.center,));
           isTraining = true;
           return;
         }
@@ -143,6 +143,16 @@ class _TrainingPageState extends State<TrainingPage>
     setState(() {
       isResting = true;
       remainingNrText = Text(' ');
+      feedbackText = Text.rich(
+        TextSpan(
+          style: TextStyle(fontSize: feedbackTextSize, color: regularTextColor),
+          children: <TextSpan>[
+            TextSpan(text: '\nFeedback\n\n\n\n', style: TextStyle(fontWeight: FontWeight.bold)),
+            TextSpan(text: '$nrOfCorrectTrial van de 12 patronen werden perfect gevormd\n'),
+            TextSpan(text: (12-nrOfCorrectTrial).toString() + ' van de 12 patronen waren helaas niet helemaal juist.'),
+          ],
+        ),
+      );
     });
 
     _restTimerPeriod =
@@ -158,11 +168,6 @@ class _TrainingPageState extends State<TrainingPage>
 
       if (restSec == (waitingTimeMs - 1)) {
         setState(() {
-//            feedbackText = Text(
-//              ' ',
-//              style: TextStyle(fontSize: 30, color: regularTextColor),
-//            );
-
           showingPatternKey.currentState
             .setState(() => showingPatternKey.currentState.setUsed([]));
         });
@@ -178,8 +183,8 @@ class _TrainingPageState extends State<TrainingPage>
           notificationText = Text('Probeer dit patroon zo snel en accuraat mogelijk na\n te maken aan de rechterkant van het scherm.',
             style: TextStyle(fontSize: notificationTextSize, color: regularTextColor),
             textAlign: TextAlign.center,);
-//            feedbackText = Text(' ');
-
+          feedbackText = Text(' ');
+          nrOfCorrectTrial = 0;
         });
         new Timer(new Duration(seconds: 1), () {
           showPatternExample();
@@ -262,8 +267,10 @@ class _TrainingPageState extends State<TrainingPage>
                         padding: const EdgeInsets.all(16.0),
                         child: notificationText,
                       ),
-//                      Text(isTraining?'Doe dit zo snel en accuraat als mogelijk.':'', style: TextStyle(fontSize: 30, color: regularTextColor),),
-//                      feedbackText,
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: feedbackText,
+                      ),
                     ],
                   ),
               ),
@@ -322,35 +329,6 @@ class _TrainingPageState extends State<TrainingPage>
                             fillPoints: true,
                             onInputComplete:
                                 (List<int> input, int duration) async {
-//                              setState(() {
-//                                feedbackText = listEquals(input, tempPattern)
-//                                    ? Text(
-//                                        'Perfect!',
-//                                        style: TextStyle(
-//                                            fontSize: 30,
-//                                            color: feedbackTextColor,
-//                                            fontWeight: FontWeight.bold),
-//                                      )
-//                                    : Text(
-//                                        'Helaas niet helemaal juist...',
-//                                        style: TextStyle(
-//                                            fontSize: 30,
-//                                            color: feedbackTextColor,
-//                                            fontWeight: FontWeight.bold),
-//                                      );
-//                                notificationText = trying % 2 == 0
-//                                    ? Text(
-//                                        'Probeer dit patroon na te maken.          Resterende herhalingen: ' +
-//                                            (12 - trying).toString(),
-//                                        style: TextStyle(fontSize: 46, color: regularTextColor),
-//                                        textAlign: TextAlign.center,)
-//                                    : Text(
-//                                        'Probeer dit patroon nogmaals na te maken. Resterende herhalingen: ' +
-//                                            (12 - trying).toString(),
-//                                        style: TextStyle(fontSize: 46, color: regularTextColor),
-//                                        textAlign: TextAlign.center,
-//                                      );
-//                              });
                               setState(() {
                                 remainingNrText = Text('\nPatroon: ' + (12-trying).toString() + '/12', style: TextStyle(
                                   color: regularTextColor, fontSize: remainingNrTextSize,
@@ -360,21 +338,24 @@ class _TrainingPageState extends State<TrainingPage>
                               await widget._logger.writeTrainingResult(trying,
                                   listEquals(input, tempPattern), duration);
 
+                              nrOfCorrectTrial += listEquals(input, tempPattern) ? 1 : 0;
+
                               if (trying == 12) {
                                 isTraining = false;
                                 if (patternNr == 8) {
                                   await widget._logger.writeFileFooter();
-                                  // TODO show training exit text
-//                                  new Timer(
-//                                      Duration(seconds: 1),
-//                                      () => setState(() => feedbackText = Text(
-//                                            'Training voltooid! Exiting...',
-//                                            style: TextStyle(
-//                                                fontSize: 30,
-//                                                color: regularTextColor,
-//                                                fontWeight: FontWeight.bold),
-//                                          )));
-                                  new Timer(Duration(seconds: 2),
+
+                                  new Timer(
+                                      Duration(seconds: 1),
+                                      () => setState(() => feedbackText = Text(
+                                            'Training voltooid! Exiting...',
+                                            style: TextStyle(
+                                                fontSize: 30,
+                                                color: regularTextColor,
+                                                fontWeight: FontWeight.bold),
+                                          )));
+
+                                  new Timer(Duration(seconds: 3),
                                       () => Navigator.pop(context));
                                   return;
                                 }
