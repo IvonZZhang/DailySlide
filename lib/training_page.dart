@@ -41,6 +41,7 @@ class _TrainingPageState extends State<TrainingPage>
   static final int waitingTimeMs = 14; // 14
   static final double notificationTextSize = 30.0;
   static final double restNotificationTextSize = 46.0;
+  static final double remainingNrTextSize = 20.0;
 
   static final Color bgColor = Color(0xFF5C5C5C);
   static final Color regularTextColor = Colors.blueGrey[50];
@@ -75,6 +76,9 @@ class _TrainingPageState extends State<TrainingPage>
   Text notificationText = Text('Probeer dit patroon zo snel en accuraat mogelijk na\n te maken aan de rechterkant van het scherm.',
                                 style: TextStyle(fontSize: notificationTextSize, color: regularTextColor),
                                 textAlign: TextAlign.center,);
+
+  // Text at top right corner showing remaining nr of trials
+  Text remainingNrText = Text(' ');
 
   // Text in the middle for feedback of a training
 //  Text feedbackText = Text(' ', style: TextStyle(fontSize: 33));
@@ -115,7 +119,10 @@ class _TrainingPageState extends State<TrainingPage>
           nodeLeft = 7;
           widget._logger.writePatternNr(patternNr + 1);
           setState(() {
-            // This setState() is here to refresh and let show right pattern.
+            // This setState() must be here to refresh and let show right pattern.
+            remainingNrText = Text('\nPatroon: 12/12', style: TextStyle(
+              color: regularTextColor, fontSize: remainingNrTextSize,
+            ),);
           });
 
 //          setState(() => notificationText = Text(
@@ -132,47 +139,53 @@ class _TrainingPageState extends State<TrainingPage>
             () => showingPatternKey.currentState.setUsed(tempPattern));
       });
 
-  void takeARest() => _restTimerPeriod =
-          new Timer.periodic(new Duration(seconds: 1), (Timer timer) {
-        --restSec;
-        setState(() {
-          notificationText = Text(
-            'Even rust: $restSec',
-            style: TextStyle(fontSize: restNotificationTextSize, color: regularTextColor),
-            textAlign: TextAlign.center,
-          );
-        });
+  void takeARest() {
+    setState(() {
+      remainingNrText = Text(' ');
+    });
 
-        if (restSec == (waitingTimeMs - 1)) {
-          setState(() {
+    _restTimerPeriod =
+    new Timer.periodic(new Duration(seconds: 1), (Timer timer) {
+      --restSec;
+      setState(() {
+        notificationText = Text(
+          'Even rust: $restSec',
+          style: TextStyle(fontSize: restNotificationTextSize, color: regularTextColor),
+          textAlign: TextAlign.center,
+        );
+      });
+
+      if (restSec == (waitingTimeMs - 1)) {
+        setState(() {
 //            feedbackText = Text(
 //              ' ',
 //              style: TextStyle(fontSize: 30, color: regularTextColor),
 //            );
-            isResting = true;
-            showingPatternKey.currentState
-              .setState(() => showingPatternKey.currentState.setUsed([]));
-          });
-        }
+          isResting = true;
+          showingPatternKey.currentState
+            .setState(() => showingPatternKey.currentState.setUsed([]));
+        });
+      }
 
-        if (restSec == 0) {
-          _restTimerPeriod.cancel();
-          restSec = waitingTimeMs;
-          tempPattern = [];
-          setState(() {
-            ++patternNr;
-            isResting = false;
-            notificationText = Text('Probeer dit patroon zo snel en accuraat mogelijk na\n te maken aan de rechterkant van het scherm.',
-                style: TextStyle(fontSize: notificationTextSize, color: regularTextColor),
-                textAlign: TextAlign.center,);
+      if (restSec == 0) {
+        _restTimerPeriod.cancel();
+        restSec = waitingTimeMs;
+        tempPattern = [];
+        setState(() {
+          ++patternNr;
+          isResting = false;
+          notificationText = Text('Probeer dit patroon zo snel en accuraat mogelijk na\n te maken aan de rechterkant van het scherm.',
+            style: TextStyle(fontSize: notificationTextSize, color: regularTextColor),
+            textAlign: TextAlign.center,);
 //            feedbackText = Text(' ');
 
-          });
-          new Timer(new Duration(seconds: 1), () {
-            showPatternExample();
-          });
-        }
-      });
+        });
+        new Timer(new Duration(seconds: 1), () {
+          showPatternExample();
+        });
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -337,6 +350,11 @@ class _TrainingPageState extends State<TrainingPage>
 //                                        textAlign: TextAlign.center,
 //                                      );
 //                              });
+                              setState(() {
+                                remainingNrText = Text('\nPatroon: ' + (12-trying).toString() + '/12', style: TextStyle(
+                                  color: regularTextColor, fontSize: remainingNrTextSize,
+                                ),);
+                              });
 
                               await widget._logger.writeTrainingResult(trying,
                                   listEquals(input, tempPattern), duration);
@@ -387,12 +405,17 @@ class _TrainingPageState extends State<TrainingPage>
             right: 0,
             child: Padding(
               padding: const EdgeInsets.all(10.0),
-              child: RaisedButton(
-                child: Text('Exit training', style: TextStyle(fontSize: 16, color: Colors.white70, fontWeight: FontWeight.bold),),
-                color: Colors.red,
-                onPressed: () {
-                  showExitDialog();
-                },),
+              child: Column(
+                children: <Widget>[
+                  RaisedButton(
+                    child: Text('Exit training', style: TextStyle(fontSize: 16, color: Colors.white70, fontWeight: FontWeight.bold),),
+                    color: Colors.red,
+                    onPressed: () {
+                      showExitDialog();
+                    },),
+                  remainingNrText,
+                ],
+              ),
             )
           ),
         ]),
