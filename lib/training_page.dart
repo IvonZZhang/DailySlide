@@ -141,7 +141,6 @@ class _TrainingPageState extends State<TrainingPage>
 
   void takeARest() {
     setState(() {
-      isResting = true;
       remainingNrText = Text(' ');
       feedbackText = Text.rich(
         TextSpan(
@@ -341,12 +340,29 @@ class _TrainingPageState extends State<TrainingPage>
                               nrOfCorrectTrial += listEquals(input, tempPattern) ? 1 : 0;
 
                               if (trying == 12) {
-                                isTraining = false;
+                                setState(() {
+                                  isTraining = false;
+                                  isResting = true;
+                                });
                                 if (patternNr == 8) {
                                   await widget._logger.writeFileFooter();
 
+                                  setState(() {
+                                    notificationText = Text('\n\n');
+                                    feedbackText = Text.rich(
+                                      TextSpan(
+                                        style: TextStyle(fontSize: feedbackTextSize, color: regularTextColor),
+                                        children: <TextSpan>[
+                                          TextSpan(text: '\nFeedback\n\n\n\n', style: TextStyle(fontWeight: FontWeight.bold)),
+                                          TextSpan(text: '$nrOfCorrectTrial of the 12 patterns were perfectly formed\n'),
+                                          TextSpan(text: (12-nrOfCorrectTrial).toString() + ' of the 12 patterns unfortunately were not entirely correct.'),
+                                        ],
+                                      ),
+                                    );
+                                  });
+
                                   new Timer(
-                                      Duration(seconds: 1),
+                                      Duration(seconds: 5),
                                       () => setState(() => feedbackText = Text(
                                             'Training finished! Exiting...',
                                             style: TextStyle(
@@ -355,7 +371,7 @@ class _TrainingPageState extends State<TrainingPage>
                                                 fontWeight: FontWeight.bold),
                                           )));
 
-                                  new Timer(Duration(seconds: 3),
+                                  new Timer(Duration(seconds: 8),
                                       () => Navigator.pop(context));
                                   return;
                                 }
