@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:connectivity/connectivity.dart';
+import 'package:daily_slide/count_result_page.dart';
 import 'package:daily_slide/loading_page.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
     return MaterialApp(
-      title: 'Daily Slide NL',
+      title: 'Daily Slide Dual',
       theme: ThemeData(
 //        primarySwatch: Colors.blueAccent[300],
         primaryColor: Colors.blue[200]
@@ -31,6 +32,7 @@ class MyApp extends StatelessWidget {
         '/training': (context) => TrainingPage(),
         '/settings': (context) => SettingsPage(),
         '/loading' : (context) => LoadingPage(),
+        '/countResult': (context) => CountResultPage(),
       },
     );
   }
@@ -51,12 +53,13 @@ class _MyHomePageState extends State<MyHomePage> {
   final _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   static final Color buttonColor = Colors.grey;
-  static final Color textColor = Colors.white;
+//  static final Color textColor = Colors.white;
 
   int patientNr;
 
   @override
   void initState() {
+    super.initState();
       () async {
       await Future.delayed(Duration.zero);
       final prefs = await SharedPreferences.getInstance();
@@ -64,7 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }();
 
     print('Got patient Nr in initState() is $patientNr\n');
-    super.initState();
+    // TODO patientNr is null here somehow but it's correct in the beginning of Build()
   }
 
   @override
@@ -200,7 +203,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         }
                         try {
                           int patientNr = int.parse(filename.split(' ').first);
-                          final StorageReference ref = FirebaseStorage().ref().child('/$patientNr/$filename');
+                          final StorageReference ref = FirebaseStorage().ref().child('/Dual $patientNr/$filename');
                           var uploadTask = ref.putFile(f);
                           StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
 
@@ -339,7 +342,7 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 // DoneTODO: change the font, color...
-// TODO: Show feedback at the end of training.
+// DoneTODO: Show feedback at the end of training.
 // DoneTODO: block the training every 12 hours
 // DoneTODO: tip, other help info...
 // DoneTODO: preference of dropbox account name?
