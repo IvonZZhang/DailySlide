@@ -64,6 +64,10 @@ flutter:
   assets:
     - assets/transparent.png
     - assets/KU_Leuven.png
+    - assets/Instructie_dual1.png
+    - assets/Instructie_dual2.png
+    - assets/Instructie_dual3.png
+    - assets/Instructie_dual.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

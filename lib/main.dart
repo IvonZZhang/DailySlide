@@ -9,6 +9,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'instruction_page.dart';
 import 'training_page.dart';
 import 'package:flutter/services.dart';
 import 'settings_page.dart';
@@ -33,6 +34,7 @@ class MyApp extends StatelessWidget {
         '/settings': (context) => SettingsPage(),
         '/loading' : (context) => LoadingPage(),
         '/countResult': (context) => CountResultPage(),
+        '/instructions': (context) => InstructionPage(),
       },
     );
   }
@@ -243,6 +245,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 leading: Icon(Icons.arrow_back, color: Colors.white70,),
                 title: Text('Close', style: TextStyle(color: Colors.white),),
                 onTap: () => Navigator.pop(context),
+              ),
+              ListTile(
+                leading: Icon(Icons.inbox, color: Colors.white70,),
+                title: Text('instr', style: TextStyle(color: Colors.white),),
+                onTap: () => Navigator.pushNamed(context, '/instructions'),
               )
             ],
           ),
