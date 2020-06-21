@@ -259,7 +259,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 minWidth: 200,
                 child: RaisedButton(
                   child: Text(
-                    'Dag 1',
+                    'Day 1',
                     style: const TextStyle(fontSize: 40, color: Colors.white),
                   ),
                   padding: EdgeInsets.all(16.0),
@@ -277,7 +277,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 minWidth: 200,
                 child: RaisedButton(
                   child: Text(
-                    'Dag 2',
+                    'Day 2',
                     style: const TextStyle(fontSize: 40, color: Colors.white),
                   ),
                   padding: EdgeInsets.all(16.0),
@@ -295,7 +295,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 minWidth: 200,
                 child: RaisedButton(
                   child: Text(
-                    'Dag 3',
+                    'Day 3',
                     style: const TextStyle(fontSize: 40, color: Colors.white),
                   ),
                   padding: EdgeInsets.all(16.0),
@@ -313,7 +313,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 minWidth: 200,
                 child: RaisedButton(
                   child: Text(
-                    'Dag 4',
+                    'Day 4',
                     style: const TextStyle(fontSize: 40, color: Colors.white),
                   ),
                   padding: EdgeInsets.all(16.0),

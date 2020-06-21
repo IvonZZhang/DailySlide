@@ -92,6 +92,35 @@
           ]
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:647432698063:android:38296da0428f2bc7ba9fba",
+        "android_client_info": {
+          "package_name": "com.ivonzhang.daily_slide_dual_en"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "647432698063-acmfm4nr476m1q6ufiu755dn9k75b8af.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDqv5rr3F2ewFVZGc6YkXlgF8tRLKZI-r8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "647432698063-acmfm4nr476m1q6ufiu755dn9k75b8af.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration_version": "1"

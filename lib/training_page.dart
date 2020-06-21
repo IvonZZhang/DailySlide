@@ -89,7 +89,7 @@ class _TrainingPageState extends State<TrainingPage>
 
   // Text on the top for general notifications
   Text notificationText = Text(
-    'Probeer dit patroon zo snel en accuraat mogelijk na\n te maken aan de rechterkant van het scherm.',
+    'Try to recreate this pattern as quickly and accurately\n as possible on the right side of the screen.',
     style: TextStyle(fontSize: notificationTextSize, color: regularTextColor),
     textAlign: TextAlign.center,);
 
@@ -314,7 +314,7 @@ class _TrainingPageState extends State<TrainingPage>
         setState(() {
           ++patternNr;
           isResting = false;
-          notificationText = Text('Probeer dit patroon zo snel en accuraat mogelijk na\n te maken aan de rechterkant van het scherm.',
+          notificationText = Text('Try to recreate this pattern as quickly and accurately\n as possible on the right side of the screen.',
             style: TextStyle(
               fontSize: notificationTextSize, color: regularTextColor),
             textAlign: TextAlign.center,);
@@ -379,9 +379,9 @@ class _TrainingPageState extends State<TrainingPage>
 
   List<TextSpan> updateCountColorText(show) {
     return show ? [
-      TextSpan(text: 'Tel gelijktijdig de '),
-      TextSpan(text: isCountingGreen ? 'groene' : 'rode', style: TextStyle(fontSize: 46, color: isCountingGreen ? Colors.green : Colors.red, fontWeight: FontWeight.bold)),
-      TextSpan(text: ' bolletjes.'),
+      TextSpan(text: 'Count the'),
+      TextSpan(text: isCountingGreen ? 'green' : 'red', style: TextStyle(fontSize: 46, color: isCountingGreen ? Colors.green : Colors.red, fontWeight: FontWeight.bold)),
+      TextSpan(text: ' balls simultaneously.'),
     ] : [];
   }
 
