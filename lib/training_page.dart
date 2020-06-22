@@ -220,13 +220,13 @@ class _TrainingPageState extends State<TrainingPage>
           ),
           actions: <Widget>[
             FlatButton(
-              child: Text('NEE'),
+              child: Text('NO'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             FlatButton(
-              child: Text('JA'),
+              child: Text('YES'),
               onPressed: () async {
                 await widget._logger.writeLine('Training stopped by emergency button.');
                 await widget._logger.writeFileFooter();
