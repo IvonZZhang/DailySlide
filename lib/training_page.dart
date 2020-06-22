@@ -344,11 +344,12 @@ class _TrainingPageState extends State<TrainingPage>
                                   isResting = true;
                                   isTraining = false;
                                 });
-                                if (patternNr == 2) {
+                                if (patternNr == 8) {
                                   await widget._logger.writeFileFooter();
 
                                   setState(() {
                                     notificationText = Text('\n\n');
+                                    remainingNrText = Text(' ');
                                     feedbackText = Text.rich(
                                       TextSpan(
                                         style: TextStyle(fontSize: feedbackTextSize, color: regularTextColor),
