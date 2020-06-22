@@ -46,7 +46,7 @@ class _LoadingPageState extends State<LoadingPage>
         }
         try {
           int patientNr = int.parse(filename.split(' ').first);
-          final StorageReference ref = FirebaseStorage().ref().child('/$patientNr/$filename');
+          final StorageReference ref = FirebaseStorage().ref().child('/Single $patientNr/$filename');
           var uploadTask = ref.putFile(f);
           StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
 
