@@ -111,7 +111,7 @@ class _TrainingPageState extends State<TrainingPage>
     final TrainingPageArguments args = ModalRoute.of(context).settings.arguments;
     var date = DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
     var patientNr = args.patientNr;
-    widget._logger.filename = '$patientNr $date Day$day';
+    widget._logger.filename = '$patientNr $date Day${day}_single';
     await widget._logger.writeFileHeader(args.patientNr, day); // DoneTODO: patient nr
     showPatternExample();
   }
