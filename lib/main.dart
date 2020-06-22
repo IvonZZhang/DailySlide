@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:connectivity/connectivity.dart';
+import 'package:daily_slide/instruction_page.dart';
 import 'package:daily_slide/loading_page.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -31,6 +32,7 @@ class MyApp extends StatelessWidget {
         '/training': (context) => TrainingPage(),
         '/settings': (context) => SettingsPage(),
         '/loading' : (context) => LoadingPage(),
+        '/instructions': (context) => InstructionPage(),
       },
     );
   }

@@ -83,7 +83,7 @@ class _LoadingPageState extends State<LoadingPage>
       print('NO WIFI');
     }
     final TrainingPageArguments args = ModalRoute.of(context).settings.arguments;
-    Navigator.pushReplacementNamed(context, '/training', arguments: args);
+    Navigator.pushReplacementNamed(context, '/instructions', arguments: args);
   }
 
   @override
