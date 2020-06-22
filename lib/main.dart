@@ -246,11 +246,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 title: Text('Close', style: TextStyle(color: Colors.white),),
                 onTap: () => Navigator.pop(context),
               ),
-              ListTile(
-                leading: Icon(Icons.inbox, color: Colors.white70,),
-                title: Text('instr', style: TextStyle(color: Colors.white),),
-                onTap: () => Navigator.pushNamed(context, '/instructions'),
-              )
             ],
           ),
         ),
