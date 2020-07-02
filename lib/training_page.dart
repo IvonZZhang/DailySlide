@@ -124,6 +124,10 @@ class _TrainingPageState extends State<TrainingPage>
 
   List<int> lightSequence = [];
 
+  // Denoting running single or dual version
+  // Difference can be: Text saying red/green, Circles, Feedback text on counting, Log, Result page
+  bool isDual = false; // TODO change this
+
   // Location offset for two lights
   static final double topOffsetLights = 330.0;
   static final double leftOffsetLights = 510.0;
@@ -196,7 +200,9 @@ class _TrainingPageState extends State<TrainingPage>
       lightsCounter = 0;
     });
 //    updateCountColorText(true);
-    isCounting = true;
+    if(isDual) {
+      isCounting = true;
+    }
 
     _timerPeriod =
     new Timer.periodic(Duration(milliseconds: exampleTimeMs), (Timer timer) {
@@ -301,11 +307,11 @@ class _TrainingPageState extends State<TrainingPage>
         );
       });
 
-      if (restSec == (waitingTimeMs - 1)) {
-        setState(() {
-          showingPatternKey.currentState.setUsed([]);
-        });
-      }
+//      if (restSec == (waitingTimeMs - 1)) {
+//        setState(() {
+//          showingPatternKey.currentState.setUsed([]);
+//        });
+//      }
 
       if (restSec == 0) {
         _restTimerPeriod.cancel();
@@ -445,15 +451,18 @@ class _TrainingPageState extends State<TrainingPage>
                         padding: const EdgeInsets.all(16.0),
                         child: notificationText,
                       ),
-                      RichText(
-                        textAlign: TextAlign.center,
-                        text: TextSpan(
-                          style: TextStyle(color: regularTextColor, fontSize: notificationTextSize, fontWeight: FontWeight.normal, fontStyle: FontStyle.normal),
-                          children: isResting ? <TextSpan>[] : <TextSpan>[
-                            TextSpan(text: 'Tel gelijktijdig de '),
-                            TextSpan(text: isCountingGreen ? 'groene' : 'rode', style: TextStyle(fontSize: 46, color: isCountingGreen ? Colors.green : Colors.red, fontWeight: FontWeight.bold)),
-                            TextSpan(text: ' bolletjes.'),
-                          ],
+                      Visibility(
+                        visible: isDual,
+                        child: RichText(
+                          textAlign: TextAlign.center,
+                          text: TextSpan(
+                            style: TextStyle(color: regularTextColor, fontSize: notificationTextSize, fontWeight: FontWeight.normal, fontStyle: FontStyle.normal),
+                            children: isResting ? <TextSpan>[] : <TextSpan>[
+                              TextSpan(text: 'Tel gelijktijdig de '),
+                              TextSpan(text: isCountingGreen ? 'groene' : 'rode', style: TextStyle(fontSize: 46, color: isCountingGreen ? Colors.green : Colors.red, fontWeight: FontWeight.bold)),
+                              TextSpan(text: ' bolletjes.'),
+                            ],
+                          ),
                         ),
                       ),
                     ],
@@ -534,7 +543,9 @@ class _TrainingPageState extends State<TrainingPage>
                                 nrOfCorrectTrial += listEquals(input, tempPattern) ? 1 : 0;
 
                                 if (trying == 12) {
-                                  await _navigateToResultPage(context, CountResultPageArguments(isCountingGreen, answer));
+                                  if(isDual) {
+                                    await _navigateToResultPage(context, CountResultPageArguments(isCountingGreen, answer));
+                                  }
 
                                   setState(() {
                                     notificationText = Text(
@@ -543,14 +554,23 @@ class _TrainingPageState extends State<TrainingPage>
                                       textAlign: TextAlign.center,
                                     );
                                     remainingNrText = Text(' ');
+                                    showingPatternKey.currentState.setUsed([]);
                                     isResting = true;
                                     feedbackText = Text.rich(
-                                      TextSpan(
+                                      isDual
+                                        ? TextSpan(
                                         style: TextStyle(fontSize: feedbackTextSize, color: regularTextColor),
                                         children: <TextSpan>[
                                           TextSpan(text: '\nFeedback\n\n\n\n', style: TextStyle(fontWeight: FontWeight.bold)),
                                           TextSpan(text: 'Het correct antwoord: $answer bolletjes\n'),
                                           TextSpan(text: 'Uw antwoord: $answeredNr bolletjes\n\n'),
+                                          TextSpan(text: '$nrOfCorrectTrial van de 12 patronen werden perfect gevormd\n'),
+                                          TextSpan(text: (12-nrOfCorrectTrial).toString() + ' van de 12 patronen waren helaas niet helemaal juist.'),
+                                        ],
+                                      )
+                                        : TextSpan(
+                                        style: TextStyle(fontSize: feedbackTextSize, color: regularTextColor),
+                                        children: <TextSpan>[
                                           TextSpan(text: '$nrOfCorrectTrial van de 12 patronen werden perfect gevormd\n'),
                                           TextSpan(text: (12-nrOfCorrectTrial).toString() + ' van de 12 patronen waren helaas niet helemaal juist.'),
                                         ],
