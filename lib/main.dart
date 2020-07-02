@@ -205,7 +205,11 @@ class _MyHomePageState extends State<MyHomePage> {
                         }
                         try {
                           int patientNr = int.parse(filename.split(' ').first);
-                          final StorageReference ref = FirebaseStorage().ref().child('/Dual $patientNr/$filename');
+                          bool isDual = filename.split('_').last.startsWith("dual");
+                          final StorageReference ref = FirebaseStorage().ref().child(
+                            isDual
+                              ? '/Dual $patientNr/$filename'
+                              : '/Single $patientNr/$filename');
                           var uploadTask = ref.putFile(f);
                           StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
 
