@@ -559,6 +559,9 @@ class _TrainingPageState extends State<TrainingPage>
                                   });
 
                                   if (patternNr == 8) {
+                                    setState(() {
+                                      notificationText = Text(' ');
+                                    });
                                     await widget._logger.writeFileFooter();
                                     new Timer(
                                       Duration(seconds: lastFeedbackTimeInSec),
