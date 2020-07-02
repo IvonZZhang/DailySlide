@@ -251,81 +251,60 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ButtonTheme(
-                height: 80,
-                minWidth: 200,
-                child: RaisedButton(
-                  child: Text(
-                    'Dag 1',
-                    style: const TextStyle(fontSize: 40, color: Colors.white),
-                  ),
-                  padding: EdgeInsets.all(16.0),
-                  color: buttonColor,
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/loading', arguments: TrainingPageArguments(1, patientNr));
-                  },
-                ),
-              ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text("Week 1", style: TextStyle(color: Colors.white70, fontSize: 36),),
+                for ( var i in List<int>.generate(5, (index) => index+1))
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ButtonTheme(
+                      height: 80,
+                      minWidth: 200,
+                      child: RaisedButton(
+                        child: Text(
+                          'Dag $i',
+                          style: const TextStyle(fontSize: 40, color: Colors.white),
+                        ),
+                        padding: EdgeInsets.all(16.0),
+                        color: buttonColor,
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/loading', arguments: TrainingPageArguments(i, patientNr));
+                        },
+                      ),
+                    ),
+                  )
+              ],
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ButtonTheme(
-                height: 80,
-                minWidth: 200,
-                child: RaisedButton(
-                  child: Text(
-                    'Dag 2',
-                    style: const TextStyle(fontSize: 40, color: Colors.white),
-                  ),
-                  padding: EdgeInsets.all(16.0),
-                  color: buttonColor,
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/loading', arguments: TrainingPageArguments(2, patientNr));
-                  },
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ButtonTheme(
-                height: 80,
-                minWidth: 200,
-                child: RaisedButton(
-                  child: Text(
-                    'Dag 3',
-                    style: const TextStyle(fontSize: 40, color: Colors.white),
-                  ),
-                  padding: EdgeInsets.all(16.0),
-                  color: buttonColor,
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/loading', arguments: TrainingPageArguments(3, patientNr));
-                  },
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ButtonTheme(
-                height: 80,
-                minWidth: 200,
-                child: RaisedButton(
-                  child: Text(
-                    'Dag 4',
-                    style: const TextStyle(fontSize: 40, color: Colors.white),
-                  ),
-                  padding: EdgeInsets.all(16.0),
-                  color: buttonColor,
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/loading', arguments: TrainingPageArguments(4, patientNr));
-                  },
-                ),
-              ),
-            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text("Week 2", style: TextStyle(color: Colors.white70, fontSize: 36),),
+                for ( var i in List<int>.generate(5, (index) => index+1))
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ButtonTheme(
+                      height: 80,
+                      minWidth: 200,
+                      child: RaisedButton(
+                        child: Text(
+                          'Dag $i',
+                          style: const TextStyle(fontSize: 40, color: Colors.white),
+                        ),
+                        padding: EdgeInsets.all(16.0),
+                        color: buttonColor,
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/loading', arguments: TrainingPageArguments(i+5, patientNr));
+                        },
+                      ),
+                    ),
+                  )
+              ],
+            )
           ],
         ),
       ),
