@@ -24,15 +24,15 @@ class _LoadingPageState extends State<LoadingPage>
       await PermissionHandler().requestPermissions([PermissionGroup.storage]);
     }
 
-    if(! await Directory('/storage/emulated/0/PDlab/').exists()) {
-      await Directory('/storage/emulated/0/PDlab/').create(recursive: true);
+    if(! await Directory('/storage/emulated/0/PDlabAssembly/').exists()) {
+      await Directory('/storage/emulated/0/PDlabAssembly/').create(recursive: true);
     }
 
-    if(! await Directory('/storage/emulated/0/PDlab/temp/').exists()) {
-      await Directory('/storage/emulated/0/PDlab/temp/').create(recursive: true);
+    if(! await Directory('/storage/emulated/0/PDlabAssembly/temp/').exists()) {
+      await Directory('/storage/emulated/0/PDlabAssembly/temp/').create(recursive: true);
     }
 
-    Directory appDocDir = Directory('/storage/emulated/0/PDlab/temp/');
+    Directory appDocDir = Directory('/storage/emulated/0/PDlabAssembly/temp/');
     await for (var f in appDocDir.list()) {
       if (f.toString().endsWith('txt\'')) {
         String filename = Path.basename(f.path);
@@ -44,13 +44,13 @@ class _LoadingPageState extends State<LoadingPage>
         }
         try {
           int patientNr = int.parse(filename.split(' ').first);
-          final StorageReference ref = FirebaseStorage().ref().child('/Dual $patientNr/$filename');
+          final StorageReference ref = FirebaseStorage().ref().child('/Assembly $patientNr/$filename');
           var uploadTask = ref.putFile(f);
           StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
 
           if(taskSnapshot.error == null) {
             // Move file in temp directory to external directory and delete it
-            File('/storage/emulated/0/PDlab/temp/$filename').copySync('/storage/emulated/0/PDlab/$filename');
+            File('/storage/emulated/0/PDlabAssembly/temp/$filename').copySync('/storage/emulated/0/PDlabAssembly/$filename');
             await f.delete();
             print('Upload successful!');
           } else {

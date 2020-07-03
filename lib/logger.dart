@@ -28,7 +28,7 @@ class Logger {
       await PermissionHandler().requestPermissions([PermissionGroup.storage]);
     }
 
-    Directory directory = Directory('/storage/emulated/0/PDlab/temp/');
+    Directory directory = Directory('/storage/emulated/0/PDlabAssembly/temp/');
 
     if(! await directory.exists()) {
       await directory.create(recursive: true);
