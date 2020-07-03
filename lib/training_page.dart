@@ -24,12 +24,29 @@ class TrainingPage extends StatefulWidget {
     [7, 4, 8, 5, 2, 1, 3],
     [7, 3, 4, 0, 1, 2, 5]
   ];
+
+  // Pattern number sequence for Day1~Day5
   final List<List<int>> sequence = [
     [1, 2, 3, 2, 2, 1, 3, 1, 3],
     [1, 3, 3, 1, 2, 2, 1, 2, 3],
     [1, 1, 2, 3, 1, 3, 2, 3, 2],
-    [1, 3, 1, 2, 3, 3, 2, 2, 1]
+    [1, 3, 1, 2, 3, 3, 2, 2, 1],
+    [1, 3, 1, 2, 3, 3, 2, 1, 2],
   ];
+
+  final seq = <int, List<int>>{
+    // ${weekNr*dayNr: [single0/dual1, sequence index]}
+    1: [0, 0],
+    2: [0, 1],
+    3: [1, 0],
+    4: [0, 2],
+    5: [1, 1],
+    6: [0, 3],
+    7: [1, 2],
+    8: [1, 3],
+    9: [0, 4],
+    10: [1, 4],
+  };
 
   final Logger _logger = Logger();
 
@@ -126,7 +143,7 @@ class _TrainingPageState extends State<TrainingPage>
 
   // Denoting running single or dual version
   // Difference can be: Text saying red/green, Circles, Feedback text on counting, Log, Result page
-  bool isDual = false; // TODO change this
+  bool isDual = false;
 
   // Location offset for two lights
   static final double topOffsetLights = 330.0;
@@ -176,7 +193,8 @@ class _TrainingPageState extends State<TrainingPage>
       .arguments;
     var date = DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
     var patientNr = args.patientNr;
-    widget._logger.filename = '$patientNr $date Day${day}_dual';
+    var week = day <= 5 ? 1 : 2;
+    widget._logger.filename = '$patientNr $date Week $week Day ${day > 5 ? day - 5 : day}';
     await widget._logger.writeFileHeader(args.patientNr, day);
     await generateLightsSequence();
     showPatternExample();
@@ -287,8 +305,8 @@ class _TrainingPageState extends State<TrainingPage>
         return;
       }
 
-      tempPattern.add(widget.patterns[widget.sequence[day - 1][patternNr] - 1]
-      [7 - nodeLeft--]);
+      int sequenceNr = widget.seq[day][1];
+      tempPattern.add(widget.patterns[widget.sequence[sequenceNr][patternNr] - 1][7 - nodeLeft--]);
       showingPatternKey.currentState.setState(
           () => showingPatternKey.currentState.setUsed(tempPattern));
     });
@@ -395,6 +413,7 @@ class _TrainingPageState extends State<TrainingPage>
   Widget build(BuildContext context) {
     final TrainingPageArguments args = ModalRoute.of(context).settings.arguments;
     day = args.dayNr;
+    isDual = widget.seq[day][0] == 1;
 
     return WillPopScope(
       onWillPop: showExitDialog,

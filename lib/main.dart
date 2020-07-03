@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
     return MaterialApp(
-      title: 'Daily Slide Dual',
+      title: 'Daily Slide Assembly',
       theme: ThemeData(
 //        primarySwatch: Colors.blueAccent[300],
         primaryColor: Colors.blue[200]
@@ -259,6 +259,7 @@ class _MyHomePageState extends State<MyHomePage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text("Week 1", style: TextStyle(color: Colors.white70, fontSize: 36),),
+                // Passed day param is 1~10
                 for ( var i in List<int>.generate(5, (index) => index+1))
                   Padding(
                     padding: const EdgeInsets.all(8.0),

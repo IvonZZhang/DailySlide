@@ -1,92 +1,34 @@
 {
   "project_info": {
-    "project_number": "647432698063",
-    "firebase_url": "https://dailyslide-66988.firebaseio.com",
-    "project_id": "dailyslide-66988",
-    "storage_bucket": "dailyslide-66988.appspot.com"
+    "project_number": "32197059755",
+    "firebase_url": "https://daily-slide-assembly.firebaseio.com",
+    "project_id": "daily-slide-assembly",
+    "storage_bucket": "daily-slide-assembly.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:647432698063:android:9d877ccf5f65a9afba9fba",
+        "mobilesdk_app_id": "1:32197059755:android:db505f4d9bf7b0c38ec3ee",
         "android_client_info": {
-          "package_name": "com.ivonzhang.daily_slide"
+          "package_name": "com.ivonzhang.daily_slide_assembly"
         }
       },
       "oauth_client": [
         {
-          "client_id": "647432698063-acmfm4nr476m1q6ufiu755dn9k75b8af.apps.googleusercontent.com",
+          "client_id": "32197059755-jo6295d4sg8duoqt6afqu44snqi306co.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDqv5rr3F2ewFVZGc6YkXlgF8tRLKZI-r8"
+          "current_key": "AIzaSyBg48Om75kSfDuzM39-QgU53wFHiWnz_XQ"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "647432698063-acmfm4nr476m1q6ufiu755dn9k75b8af.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:647432698063:android:63a3feb8e6511db1ba9fba",
-        "android_client_info": {
-          "package_name": "com.ivonzhang.daily_slide_dual"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "647432698063-acmfm4nr476m1q6ufiu755dn9k75b8af.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDqv5rr3F2ewFVZGc6YkXlgF8tRLKZI-r8"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "647432698063-acmfm4nr476m1q6ufiu755dn9k75b8af.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:647432698063:android:11a08c98ede84a27ba9fba",
-        "android_client_info": {
-          "package_name": "com.ivonzhang.dailyslideen"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "647432698063-acmfm4nr476m1q6ufiu755dn9k75b8af.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDqv5rr3F2ewFVZGc6YkXlgF8tRLKZI-r8"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "647432698063-acmfm4nr476m1q6ufiu755dn9k75b8af.apps.googleusercontent.com",
+              "client_id": "32197059755-jo6295d4sg8duoqt6afqu44snqi306co.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

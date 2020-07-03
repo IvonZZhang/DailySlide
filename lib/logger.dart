@@ -79,7 +79,12 @@ class Logger {
     // Write the file
     sink.write('Patient No.$patientNr\n');
     sink.write(DateFormat('yyyy-MM-dd HH:mm:ss\n').format(DateTime.now()));
-    sink.write('Training data of Day $dayNr:\n');
+    var week = 1;
+    if(dayNr > 5) {
+      week = 2;
+      dayNr -= 5;
+    }
+    sink.write('Training data of Week $week Day $dayNr:\n');
 
     sink.close();
     return 0;
