@@ -18,7 +18,7 @@ class _CountResultPage extends State<CountResultPage> {
 
   static final Color bgColor = Color(0xFF5C5C5C);
   static final Color regularTextColor = Colors.blueGrey[50];
-  static final Color feedbackTextColor = Colors.deepOrange;
+//  static final Color feedbackTextColor = Colors.deepOrange;
 
   // List[1..15], all possible answers
   var answers = new List<int>.generate(16, (i) => i);
@@ -26,8 +26,8 @@ class _CountResultPage extends State<CountResultPage> {
   // Indicates which nr user tapped, -1 means not tapped yet
   var answeredNr = -1;
 
-  static final Color correctButtonColor = Colors.green;
-  static final Color wrongButtonColor = Colors.red;
+//  static final Color correctButtonColor = Colors.green;
+//  static final Color wrongButtonColor = Colors.red;
 
   var originalButtonColor = Colors.white70;
 

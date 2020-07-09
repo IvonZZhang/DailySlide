@@ -38,7 +38,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.ivonzhang.daily_slide_assembly"
+        applicationId "com.ivonzhang.daily_slide_test"
         minSdkVersion 16
         targetSdkVersion 28
         versionCode flutterVersionCode.toInteger()

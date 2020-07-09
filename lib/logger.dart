@@ -23,18 +23,16 @@ class Logger {
     */
     // Check storage permission
     PermissionStatus permission = await PermissionHandler().checkPermissionStatus(PermissionGroup.storage);
-    print('Permission is ${permission.value}');
+//    print('Permission is ${permission.value}');
     if(permission.value != PermissionStatus.granted.value) {
       await PermissionHandler().requestPermissions([PermissionGroup.storage]);
     }
 
-    Directory directory = Directory('/storage/emulated/0/PDlabAssembly/temp/');
+    Directory directory = Directory('/storage/emulated/0/PDlabTest/temp/');
 
     if(! await directory.exists()) {
       await directory.create(recursive: true);
     }
-
-
 
     return directory.path;
   }
@@ -72,19 +70,14 @@ class Logger {
     }
   }
 
-  Future<int> writeFileHeader(int patientNr, int dayNr) async {
+  Future<int> writeFileHeader(int patientNr) async {
     final file = await _localFile;
     var sink = file.openWrite(mode: FileMode.write);
 
     // Write the file
     sink.write('Patient No.$patientNr\n');
     sink.write(DateFormat('yyyy-MM-dd HH:mm:ss\n').format(DateTime.now()));
-    var week = 1;
-    if(dayNr > 5) {
-      week = 2;
-      dayNr -= 5;
-    }
-    sink.write('Training data of Week $week Day $dayNr:\n');
+    sink.write('Training data of Test:\n');
 
     sink.close();
     return 0;

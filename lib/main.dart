@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
     return MaterialApp(
-      title: 'Daily Slide Assembly',
+      title: 'Daily Slide Test',
       theme: ThemeData(
 //        primarySwatch: Colors.blueAccent[300],
         primaryColor: Colors.blue[200]
@@ -179,21 +179,21 @@ class _MyHomePageState extends State<MyHomePage> {
                   if(connectivityResult == ConnectivityResult.wifi) {
                     // Check storage permission
                     PermissionStatus permission = await PermissionHandler().checkPermissionStatus(PermissionGroup.storage);
-                    print('Permission is ${permission.value}');
+//                    print('Permission is ${permission.value}');
                     if(permission.value != PermissionStatus.granted.value) {
                       await PermissionHandler().requestPermissions([PermissionGroup.storage]);
                     }
 
-                    final dirUploaded = '/storage/emulated/0/PDlabAssembly/';
+                    final dirUploaded = '/storage/emulated/0/PDlabTest/';
                     if(! await Directory(dirUploaded).exists()) {
                       await Directory(dirUploaded).create(recursive: true);
                     }
 
-                    if(! await Directory('/storage/emulated/0/PDlabAssembly/temp/').exists()) {
-                      await Directory('/storage/emulated/0/PDlabAssembly/temp/').create(recursive: true);
+                    if(! await Directory('/storage/emulated/0/PDlabTest/temp/').exists()) {
+                      await Directory('/storage/emulated/0/PDlabTest/temp/').create(recursive: true);
                     }
 
-                    Directory appDocDir = Directory('/storage/emulated/0/PDlabAssembly/temp/');
+                    Directory appDocDir = Directory('/storage/emulated/0/PDlabTest/temp/');
                     await for (var f in appDocDir.list()) {
                       if (f.toString().endsWith('txt\'')) {
                         String filename = Path.basename(f.path);
@@ -205,13 +205,13 @@ class _MyHomePageState extends State<MyHomePage> {
                         }
                         try {
                           int patientNr = int.parse(filename.split(' ').first);
-                          final StorageReference ref = FirebaseStorage().ref().child('/Assembly $patientNr/$filename');
+                          final StorageReference ref = FirebaseStorage().ref().child('/Test $patientNr/$filename');
                           var uploadTask = ref.putFile(f);
                           StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
 
                           if(taskSnapshot.error == null) {
                             // Move file in temp directory to external directory and delete it
-                            File('/storage/emulated/0/PDlabAssembly/temp/$filename').copySync('/storage/emulated/0/PDlabAssembly/$filename');
+                            File('/storage/emulated/0/PDlabTest/temp/$filename').copySync('/storage/emulated/0/PDlabTest/$filename');
                             await f.delete();
                             print('Upload successful!');
                           } else {
@@ -251,63 +251,25 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       body: Center(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text("Week 1", style: TextStyle(color: Colors.white70, fontSize: 36),),
-                // Passed day param is 1~10
-                for ( var i in List<int>.generate(5, (index) => index+1))
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ButtonTheme(
-                      height: 80,
-                      minWidth: 200,
-                      child: RaisedButton(
-                        child: Text(
-                          'Dag $i',
-                          style: const TextStyle(fontSize: 40, color: Colors.white),
-                        ),
-                        padding: EdgeInsets.all(16.0),
-                        color: buttonColor,
-                        onPressed: () {
-                          Navigator.pushNamed(context, '/loading', arguments: TrainingPageArguments(i, patientNr));
-                        },
-                      ),
-                    ),
-                  )
-              ],
+        child:
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ButtonTheme(
+              height: 80,
+              minWidth: 200,
+              child: RaisedButton(
+                child: Text(
+                  'Start Test',
+                  style: const TextStyle(fontSize: 46, color: Colors.white),
+                ),
+                padding: EdgeInsets.all(26.0),
+                color: buttonColor,
+                onPressed: () {
+                  Navigator.pushNamed(context, '/loading', arguments: TrainingPageArguments(patientNr));
+                },
+              ),
             ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text("Week 2", style: TextStyle(color: Colors.white70, fontSize: 36),),
-                for ( var i in List<int>.generate(5, (index) => index+1))
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ButtonTheme(
-                      height: 80,
-                      minWidth: 200,
-                      child: RaisedButton(
-                        child: Text(
-                          'Dag $i',
-                          style: const TextStyle(fontSize: 40, color: Colors.white),
-                        ),
-                        padding: EdgeInsets.all(16.0),
-                        color: buttonColor,
-                        onPressed: () {
-                          Navigator.pushNamed(context, '/loading', arguments: TrainingPageArguments(i+5, patientNr));
-                        },
-                      ),
-                    ),
-                  )
-              ],
-            )
-          ],
-        ),
+          ),
       ),
     );
   }

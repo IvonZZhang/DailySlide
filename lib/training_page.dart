@@ -11,42 +11,28 @@ import 'package:after_layout/after_layout.dart';
 import 'package:intl/intl.dart';
 
 class TrainingPageArguments {
-  final int dayNr;
   final int patientNr;
 
-  TrainingPageArguments(this.dayNr, this.patientNr);
+  TrainingPageArguments(this.patientNr);
 }
 
 class TrainingPage extends StatefulWidget {
 
   final List<List<int>> patterns = [
-    [7, 6, 3, 0, 4, 1, 5],
-    [7, 4, 8, 5, 2, 1, 3],
-    [7, 3, 4, 0, 1, 2, 5]
+    [7, 4, 6, 3, 0, 1, 5],
+    [7, 8, 5, 2, 4, 1, 3],
+    [7, 6, 4, 0, 1, 2, 5],
+    [7, 6, 3, 0, 4, 2, 5],
+    [7, 5, 4, 2, 1, 0, 3],
+    [7, 8, 4, 2, 1, 0, 3]
   ];
 
   // Pattern number sequence for Day1~Day5
   final List<List<int>> sequence = [
-    [1, 2, 3, 2, 2, 1, 3, 1, 3],
-    [1, 3, 3, 1, 2, 2, 1, 2, 3],
-    [1, 1, 2, 3, 1, 3, 2, 3, 2],
-    [1, 3, 1, 2, 3, 3, 2, 2, 1],
-    [1, 3, 1, 2, 3, 3, 2, 1, 2],
+    [1, 2, 3],
+    [],
+    [4, 5, 6]
   ];
-
-  final seq = <int, List<int>>{
-    // ${weekNr*dayNr: [single0/dual1, sequence index]}
-    1: [0, 0],
-    2: [0, 1],
-    3: [1, 0],
-    4: [0, 2],
-    5: [1, 1],
-    6: [0, 3],
-    7: [1, 2],
-    8: [1, 3],
-    9: [0, 4],
-    10: [1, 4],
-  };
 
   final Logger _logger = Logger();
 
@@ -58,13 +44,14 @@ class _TrainingPageState extends State<TrainingPage>
   with AfterLayoutMixin<TrainingPage> {
 
   // Constants
-  static final int exampleTimeMs = 800; // 800
-  static final int waitingTimeMs = 14; // 14
+  static final int exampleTimeMs = 80; // 800
+  static final int waitingTimeMs = 2; // 14
   static final int totalLights = 30;
   static final int lightsCycleTimeInSec = 3; // 3
   static final int lightsOnTimeInMillisec = 500; // 500
   static final int delayBetweenExampleAndFirstLightInSec = 2; // 2
   static final int lastFeedbackTimeInSec = 6;
+  static final int pureCountingTaskTimeInSec = 30; // 30
   static final double notificationTextSize = 30.0;
   static final double remainingNrTextSize = 23.0;
   static final double feedbackTextSize = 33.0;
@@ -73,7 +60,7 @@ class _TrainingPageState extends State<TrainingPage>
   static final Color regularTextColor = Colors.blueGrey[50];
   static final Color selectedCircleColor = Color(0xFF092E6B);
   static final Color notSelectedCircleColor = Color(0xFFA0B8DC);
-  static final Color feedbackTextColor = Colors.deepOrange;
+//  static final Color feedbackTextColor = Colors.deepOrange;
   static final Color exampleTextColor = Color(0xCF092E6B);
 
 //  static final Color snackBarTextColor = Colors.white;
@@ -95,8 +82,10 @@ class _TrainingPageState extends State<TrainingPage>
   // The index of pattern in a series/sequence
   int patternNr = 0;
 
-  // The index of day/sequence
-  int day = -1;
+  // Phase 1: Pattern tracing only.
+  // Phase 2: Lights counting only.
+  // Phase 3： Dual task
+  int phase = 1;
 
   // The nr of trying (max 12)
   int trying = 1;
@@ -140,15 +129,15 @@ class _TrainingPageState extends State<TrainingPage>
   bool isCountingGreen = true;
 
   List<int> lightSequence = [];
-
-  // Denoting running single or dual version
+  
   // Difference can be: Text saying red/green, Circles, Feedback text on counting, Log, Result page
-  bool isDual = false;
+  bool doCounting = false;
+  bool doPattern = true;
 
   // Location offset for two lights
-  static final double topOffsetLights = 330.0;
-  static final double leftOffsetLights = 510.0;
-  static final double offsetBetweenLights = 80.0;
+  static final double topOffsetLights = 330.0; //330
+  static final double leftOffsetLights = 510.0; //510
+  static final double offsetBetweenLights = 80.0; //80
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final trainingPatternKey = GlobalKey<PatternLockState>();
@@ -175,6 +164,7 @@ class _TrainingPageState extends State<TrainingPage>
     }
     greenIndices.add(totalLights - 1);
 
+    lightSequence.clear();
     for (int i = 0; i < totalLights; ++i) {
       lightSequence.add(greenIndices.contains(i) ? 1 : 0);
     }
@@ -187,148 +177,155 @@ class _TrainingPageState extends State<TrainingPage>
 
   @override
   void afterFirstLayout(BuildContext context) async {
-    final TrainingPageArguments args = ModalRoute
-      .of(context)
-      .settings
-      .arguments;
+    final TrainingPageArguments args = ModalRoute.of(context).settings.arguments;
     var date = DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
     var patientNr = args.patientNr;
-    var week = day <= 5 ? 1 : 2;
-    widget._logger.filename = '$patientNr $date Week $week Day ${day > 5 ? day - 5 : day}';
-    await widget._logger.writeFileHeader(args.patientNr, day);
-    await generateLightsSequence();
-    showPatternExample();
+    widget._logger.filename = '$patientNr $date Test';
+    await widget._logger.writeFileHeader(args.patientNr);
+
+//    await generateLightsSequence();
+//    if(doPattern) {
+//      startPatternExample();
+//    } else {
+//      startCountingLights();
+//    }
+    startPatternExample();
   }
 
-  void showPatternExample() {
+  void startCountingLights() {
     setState(() {
       // Decide which color to count
       isCountingGreen = Random().nextBool();
-      if (isCountingGreen ==
-        false) { // Make sure the last one is the one to be count
+      if (isCountingGreen == false) { // Make sure the last one is the one to be count
         for (int i = 0; i < lightSequence.length; ++i) {
-          if (lightSequence[i] == 1) {
-            lightSequence[i] = 0;
-          } else {
-            lightSequence[i] = 1;
-          }
+          lightSequence[i] ^= 1; // reverse every bit
         }
       }
       answer = 0;
       lightsCounter = 0;
     });
-//    updateCountColorText(true);
-    if(isDual) {
-      isCounting = true;
+
+    if(phase == 2) {
+      new Timer(Duration(seconds: pureCountingTaskTimeInSec), () async {
+        this._lightsTimerPeriod.cancel();
+        await _navigateToResultPage(context, CountResultPageArguments(isCountingGreen, answer));
+        updateRestingText();
+        takeARest();
+      });
     }
 
-    _timerPeriod =
-    new Timer.periodic(Duration(milliseconds: exampleTimeMs), (Timer timer) {
-      if (nodeLeft == 0) {// Example pattern finished
-        _timerPeriod.cancel();
-        nodeLeft = 7;
-        widget._logger.writePatternNr(patternNr + 1);
+    new Timer(Duration(seconds: delayBetweenExampleAndFirstLightInSec), () {
+      setState(() {
+        // Lit up the correct light
+        greenLightsOn = (lightSequence[lightsCounter] == 1);
+        redLightsOn = (lightSequence[lightsCounter] == 0);
+        feedbackText = Text('   ');
+        print('Counter $lightsCounter: green is $greenLightsOn, red is $redLightsOn.');
+      });
 
+      new Timer(Duration(milliseconds: lightsOnTimeInMillisec), () {
         setState(() {
-          // This setState() must be here to refresh and let show right pattern.
-          remainingNrText = Text('\nPatroon: 12/12', style: TextStyle(
-            color: regularTextColor, fontSize: remainingNrTextSize,
-          ),);
+          greenLightsOn = redLightsOn = false;
+          feedbackText = Text('  ');
         });
+      });
 
-        isTraining = true;
-
-        new Timer(Duration(seconds: delayBetweenExampleAndFirstLightInSec), () {
-          setState(() {
-            // Lit up the correct light
-            greenLightsOn = (lightSequence[lightsCounter] == 1);
-            redLightsOn = (lightSequence[lightsCounter] == 0);
-
-            print(
-              'Counter $lightsCounter: green is $greenLightsOn, red is $redLightsOn.');
-          });
-
-          new Timer(Duration(milliseconds: lightsOnTimeInMillisec), () {
-            setState(() {
-              greenLightsOn = redLightsOn = false;
-            });
-          });
-
-          // count appeared
-          if ((isCountingGreen && lightSequence[lightsCounter] == 1) ||
-            (!isCountingGreen && lightSequence[lightsCounter] == 0)) {
-            answer++;
-          }
-
-          setState(() {
-            lightsCounter++;
-          });
-
-          print('Counter $lightsCounter: answer is $answer.');
-
-          _lightsTimerPeriod = new Timer.periodic(
-            Duration(seconds: lightsCycleTimeInSec), (Timer timer) {
-            setState(() {
-              // Lit up the correct light
-              greenLightsOn = (lightSequence[lightsCounter] == 1);
-              redLightsOn = (lightSequence[lightsCounter] == 0);
-            });
-
-            new Timer(Duration(milliseconds: lightsOnTimeInMillisec), () {
-              setState(() {
-                greenLightsOn = redLightsOn = false;
-              });
-            });
-
-            // count appeared
-            if ((isCountingGreen && lightSequence[lightsCounter] == 1) ||
-              (!isCountingGreen && lightSequence[lightsCounter] == 0)) {
-              answer++;
-            }
-
-            setState(() {
-              lightsCounter++;
-            });
-
-            print('Counter $lightsCounter: answer is $answer.');
-
-            if (lightsCounter == totalLights) {
-              print('In "if", reached max lights nr.');
-              _lightsTimerPeriod.cancel();
-              if (answer != totalLights / 2) {
-                print("ERROR: lights stopped but answer is not 15.");
-              }
-            }
-          });
-        });
-
-        return;
+      // count appeared
+      if ((isCountingGreen && lightSequence[lightsCounter] == 1) ||
+        (!isCountingGreen && lightSequence[lightsCounter] == 0)) {
+        answer++;
       }
 
-      int sequenceNr = widget.seq[day][1];
-      tempPattern.add(widget.patterns[widget.sequence[sequenceNr][patternNr] - 1][7 - nodeLeft--]);
-      showingPatternKey.currentState.setState(
-          () => showingPatternKey.currentState.setUsed(tempPattern));
+      setState(() {
+        lightsCounter++;
+      });
+
+      print('Counter $lightsCounter: answer is $answer.');
+
+      this._lightsTimerPeriod = new Timer.periodic(
+                        Duration(seconds: lightsCycleTimeInSec), (Timer timer) {
+        setState(() {
+          // Lit up the correct light
+          greenLightsOn = (lightSequence[lightsCounter] == 1);
+          redLightsOn = (lightSequence[lightsCounter] == 0);
+          feedbackText = Text('   ');
+        });
+        print('Green lights on: $greenLightsOn, red lights on: $redLightsOn. With lightSequence == ${lightSequence[lightsCounter]}');
+
+        new Timer(Duration(milliseconds: lightsOnTimeInMillisec), () {
+          setState(() {
+            greenLightsOn = redLightsOn = false;
+            feedbackText = Text('  ');
+          });
+        });
+
+        // count appeared
+        if ((isCountingGreen && lightSequence[lightsCounter] == 1) ||
+          (!isCountingGreen && lightSequence[lightsCounter] == 0)) {
+          answer++;
+        }
+
+        setState(() {
+          lightsCounter++;
+        });
+
+        print('Counter $lightsCounter: answer is $answer.');
+
+        if (lightsCounter == totalLights) {
+          print('In "if", reached max lights nr.');
+          _lightsTimerPeriod.cancel();
+          if (answer != totalLights / 2) {
+            print("ERROR: lights stopped but answer is not 15.");
+          }
+        }
+      });
     });
+  }
+
+  void startPatternExample() {
+    if(doPattern) {
+      _timerPeriod = new Timer.periodic(Duration(milliseconds: exampleTimeMs), (Timer timer) {
+        if (nodeLeft == 0) {// Example pattern finished
+          _timerPeriod.cancel();
+          nodeLeft = 7;
+          widget._logger.writePatternNr(patternNr + 1);
+
+          setState(() {
+            // This setState() must be here to refresh and let show right pattern.
+            remainingNrText = Text('\nPatroon: 12/12', style: TextStyle(
+              color: regularTextColor, fontSize: remainingNrTextSize,
+            ),);
+          });
+
+          isTraining = true;
+          if(doCounting) {
+            startCountingLights();
+          }
+          return;
+        }
+
+        tempPattern.add(widget.patterns[widget.sequence[phase - 1][patternNr] - 1][7 - nodeLeft--]);
+        showingPatternKey.currentState.setState(
+            () => showingPatternKey.currentState.setUsed(tempPattern));
+      });
+    }
   }
 
   void takeARest() {
 //    isResting = true;
-    _restTimerPeriod =
-    new Timer.periodic(new Duration(seconds: 1), (Timer timer) {
-      --restSec;
-      setState(() {
-        notificationText = Text(
-          'Even rust: $restSec',
-          style: TextStyle(fontSize: 46, color: regularTextColor),
-          textAlign: TextAlign.center,
-        );
-      });
+    isTraining = false;
+    isCounting = false;
 
-//      if (restSec == (waitingTimeMs - 1)) {
-//        setState(() {
-//          showingPatternKey.currentState.setUsed([]);
-//        });
+    _restTimerPeriod = new Timer.periodic(new Duration(seconds: 1), (Timer timer) {
+      --restSec;
+//      if(doPattern) {
+        setState(() {
+          notificationText = Text(
+            'Even rust: $restSec',
+            style: TextStyle(fontSize: 46, color: regularTextColor),
+            textAlign: TextAlign.center,
+          );
+        });
 //      }
 
       if (restSec == 0) {
@@ -337,18 +334,46 @@ class _TrainingPageState extends State<TrainingPage>
         tempPattern = [];
         setState(() {
           ++patternNr;
+          print('PatternNr is $patternNr');
+
+          if(patternNr == 3) {
+            patternNr = 0;
+            if(phase == 1) {
+              doCounting = true;
+              doPattern = false;
+              phase = 2;
+            } else if(phase == 2) {
+              doPattern = true;
+              doCounting = true;
+              phase = 3;
+            }
+          }
+
           isResting = false;
-          notificationText = Text('Probeer dit patroon zo snel en accuraat mogelijk na\n te maken aan de rechterkant van het scherm.',
-            style: TextStyle(
-              fontSize: notificationTextSize, color: regularTextColor),
-            textAlign: TextAlign.center,);
+          if(doPattern) {
+            notificationText = Text('Probeer dit patroon zo snel en accuraat mogelijk na\n te maken aan de rechterkant van het scherm.',
+              style: TextStyle(
+                fontSize: notificationTextSize, color: regularTextColor),
+              textAlign: TextAlign.center,);
+          } else {
+            notificationText = Text('');
+          }
+
           feedbackText = Text(' ');
           nrOfCorrectTrial = 0;
         });
+        
         new Timer(new Duration(microseconds: 1), () async {
           await generateLightsSequence();
-          showPatternExample();
+          if(doPattern) {
+            startPatternExample();
+          } else {
+            startCountingLights();
+          }
         });
+        if(phase != 1) {
+          isCounting = true;
+        }
       }
     });
   }
@@ -401,19 +426,16 @@ class _TrainingPageState extends State<TrainingPage>
     );
   }
 
-  List<TextSpan> updateCountColorText(show) {
-    return show ? [
-      TextSpan(text: 'Tel gelijktijdig de '),
-      TextSpan(text: isCountingGreen ? 'groene' : 'rode', style: TextStyle(fontSize: 46, color: isCountingGreen ? Colors.green : Colors.red, fontWeight: FontWeight.bold)),
-      TextSpan(text: ' bolletjes.'),
-    ] : [];
-  }
+//  List<TextSpan> updateCountColorText(show) {
+//    return show ? [
+//      TextSpan(text: 'Tel gelijktijdig de '),
+//      TextSpan(text: isCountingGreen ? 'groene' : 'rode', style: TextStyle(fontSize: 46, color: isCountingGreen ? Colors.green : Colors.red, fontWeight: FontWeight.bold)),
+//      TextSpan(text: ' bolletjes.'),
+//    ] : [];
+//  }
 
   @override
   Widget build(BuildContext context) {
-    final TrainingPageArguments args = ModalRoute.of(context).settings.arguments;
-    day = args.dayNr;
-    isDual = widget.seq[day][0] == 1;
 
     return WillPopScope(
       onWillPop: showExitDialog,
@@ -471,7 +493,7 @@ class _TrainingPageState extends State<TrainingPage>
                         child: notificationText,
                       ),
                       Visibility(
-                        visible: isDual,
+                        visible: doCounting,
                         child: RichText(
                           textAlign: TextAlign.center,
                           text: TextSpan(
@@ -495,28 +517,27 @@ class _TrainingPageState extends State<TrainingPage>
                       Flexible(
                         flex: 1,
                         child: Center(
-                          child: Stack(
-                            fit: StackFit.expand,
-                            children: <Widget>[
-                              Visibility(
-                                visible: !isResting,
-                                child: PatternLock(
-                                  key: showingPatternKey,
-                                  selectedColor: selectedCircleColor,
-                                  notSelectedColor: notSelectedCircleColor,
-                                  pointRadius: 27,
-                                  fillPoints: true,
-                                  onInputComplete: (List<int> input, int duration) {},
+                          child: Visibility(
+                            visible: doPattern && !isResting,
+                            child: Stack(
+                              fit: StackFit.expand,
+                              children: <Widget>[
+                                Center(
+                                  child: PatternLock(
+                                    key: showingPatternKey,
+                                    selectedColor: selectedCircleColor,
+                                    notSelectedColor: notSelectedCircleColor,
+                                    pointRadius: 27,
+                                    fillPoints: true,
+                                    onInputComplete: (List<int> input, int duration) {},
+                                  ),
                                 ),
-                              ),
-                              Image(
-                                image: AssetImage('assets/transparent.png')
-                              ),
-                              Positioned(
-                                bottom: 40,
-                                right: 200,
-                                child: Visibility(
-                                  visible: !isResting,
+                                Image(
+                                  image: AssetImage('assets/transparent.png')
+                                ),
+                                Positioned(
+                                  bottom: 40,
+                                  right: 200,
                                   child: Text(
                                     'Voorbeeld',
                                     style: TextStyle(
@@ -525,8 +546,8 @@ class _TrainingPageState extends State<TrainingPage>
                                       color: exampleTextColor),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           )
                         ),
                       ),
@@ -534,7 +555,7 @@ class _TrainingPageState extends State<TrainingPage>
                         flex: 1,
                         child: Center(
                           child: Visibility(
-                            visible: isTraining,
+                            visible: doPattern && isTraining,
                             child: PatternLock(
                               key: trainingPatternKey,
                               selectedColor: selectedCircleColor,
@@ -549,8 +570,10 @@ class _TrainingPageState extends State<TrainingPage>
                                   ),);
 
                                   if (trying == 12) {
-                                    _lightsTimerPeriod.cancel();
-                                    print('light timer canceled on 12th finish.');
+                                    if(doCounting) {
+                                      _lightsTimerPeriod.cancel();
+                                      print('light timer canceled on 12th finish.');
+                                    }
                                     isTraining = false;
                                     isCounting = false;
                                   }
@@ -562,42 +585,13 @@ class _TrainingPageState extends State<TrainingPage>
                                 nrOfCorrectTrial += listEquals(input, tempPattern) ? 1 : 0;
 
                                 if (trying == 12) {
-                                  if(isDual) {
+                                  if(doCounting) {
                                     await _navigateToResultPage(context, CountResultPageArguments(isCountingGreen, answer));
                                   }
 
-                                  setState(() {
-                                    notificationText = Text(
-                                      'Even rust: $waitingTimeMs',
-                                      style: TextStyle(fontSize: 46, color: regularTextColor),
-                                      textAlign: TextAlign.center,
-                                    );
-                                    remainingNrText = Text(' ');
-                                    showingPatternKey.currentState.setUsed([]);
-                                    isResting = true;
-                                    feedbackText = Text.rich(
-                                      isDual
-                                        ? TextSpan(
-                                        style: TextStyle(fontSize: feedbackTextSize, color: regularTextColor),
-                                        children: <TextSpan>[
-                                          TextSpan(text: '\nFeedback\n\n\n\n', style: TextStyle(fontWeight: FontWeight.bold)),
-                                          TextSpan(text: 'Het correct antwoord: $answer bolletjes\n'),
-                                          TextSpan(text: 'Uw antwoord: $answeredNr bolletjes\n\n'),
-                                          TextSpan(text: '$nrOfCorrectTrial van de 12 patronen werden perfect gevormd\n'),
-                                          TextSpan(text: (12-nrOfCorrectTrial).toString() + ' van de 12 patronen waren helaas niet helemaal juist.'),
-                                        ],
-                                      )
-                                        : TextSpan(
-                                        style: TextStyle(fontSize: feedbackTextSize, color: regularTextColor),
-                                        children: <TextSpan>[
-                                          TextSpan(text: '$nrOfCorrectTrial van de 12 patronen werden perfect gevormd\n'),
-                                          TextSpan(text: (12-nrOfCorrectTrial).toString() + ' van de 12 patronen waren helaas niet helemaal juist.'),
-                                        ],
-                                      ),
-                                    );
-                                  });
+                                  updateRestingText();
 
-                                  if (patternNr == 8) {
+                                  if (patternNr == 2 && phase == 3) {// Nr of pattern - 1
                                     setState(() {
                                       notificationText = Text(' ');
                                     });
@@ -643,14 +637,74 @@ class _TrainingPageState extends State<TrainingPage>
                       onPressed: () {
                         showExitDialog();
                       },),
-                    remainingNrText,
+                    Visibility(
+                      visible: doPattern && !isResting,
+                      child: remainingNrText
+                    ),
                   ],
                 ),
               )
             ),
-          ]),
+          ],
+        ),
       ),
     );
+  }
+
+  void updateRestingText() {
+    this.setState(() {
+      notificationText = Text(
+        'Even rust: $waitingTimeMs',
+        style: TextStyle(fontSize: 46, color: regularTextColor),
+        textAlign: TextAlign.center,
+      );
+//      if(doPattern) {
+        remainingNrText = Text(' ');
+//      }
+      if(doPattern) {
+        showingPatternKey.currentState.setUsed([]);
+      }
+      isResting = true;
+//      print('doCounting: $doCounting, doPattern: $doPattern');
+      if(doCounting) {
+        if (doPattern) {
+          feedbackText = Text.rich(
+            TextSpan(
+              style: TextStyle(fontSize: feedbackTextSize, color: regularTextColor),
+              children: <TextSpan>[
+                TextSpan(text: '\nFeedback\n\n\n\n', style: TextStyle(fontWeight: FontWeight.bold)),
+                TextSpan(text: 'Het correct antwoord: $answer bolletjes\n'),
+                TextSpan(text: 'Uw antwoord: $answeredNr bolletjes\n\n'),
+                TextSpan(text: '$nrOfCorrectTrial van de 12 patronen werden perfect gevormd\n'),
+                TextSpan(text: (12-nrOfCorrectTrial).toString() + ' van de 12 patronen waren helaas niet helemaal juist.'),
+              ],
+            ),
+          );
+        } else {
+          feedbackText = Text.rich(
+            TextSpan(
+              style: TextStyle(fontSize: feedbackTextSize, color: regularTextColor),
+              children: <TextSpan>[
+                TextSpan(text: '\nFeedback\n\n\n\n', style: TextStyle(fontWeight: FontWeight.bold)),
+                TextSpan(text: 'Het correct antwoord: $answer bolletjes\n'),
+                TextSpan(text: 'Uw antwoord: $answeredNr bolletjes\n\n'),
+              ]
+            )
+          );
+        }
+      } else {
+        feedbackText = Text.rich(
+          TextSpan(
+            style: TextStyle(fontSize: feedbackTextSize, color: regularTextColor),
+            children: <TextSpan>[
+              TextSpan(text: '\nFeedback\n\n\n\n', style: TextStyle(fontWeight: FontWeight.bold)),
+              TextSpan(text: '$nrOfCorrectTrial van de 12 patronen werden perfect gevormd\n'),
+              TextSpan(text: (12-nrOfCorrectTrial).toString() + ' van de 12 patronen waren helaas niet helemaal juist.'),
+            ],
+          ),
+        );
+      }
+    });
   }
 
   _navigateToResultPage(BuildContext context, CountResultPageArguments args) async {

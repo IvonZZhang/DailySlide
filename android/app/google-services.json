@@ -8,9 +8,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:32197059755:android:db505f4d9bf7b0c38ec3ee",
+        "mobilesdk_app_id": "1:32197059755:android:9d12f0b65513b86d8ec3ee",
         "android_client_info": {
-          "package_name": "com.ivonzhang.daily_slide_assembly"
+          "package_name": "com.ivonzhang.daily_slide_test"
         }
       },
       "oauth_client": [
