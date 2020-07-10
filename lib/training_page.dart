@@ -44,8 +44,8 @@ class _TrainingPageState extends State<TrainingPage>
   with AfterLayoutMixin<TrainingPage> {
 
   // Constants
-  static final int exampleTimeMs = 80; // 800
-  static final int waitingTimeMs = 2; // 14
+  static final int exampleTimeMs = 800; // 800
+  static final int waitingTimeMs = 14; // 14
   static final int totalLights = 30;
   static final int lightsCycleTimeInSec = 3; // 3
   static final int lightsOnTimeInMillisec = 500; // 500
@@ -342,6 +342,7 @@ class _TrainingPageState extends State<TrainingPage>
               doCounting = true;
               doPattern = false;
               phase = 2;
+              this.widget._logger.writeLine('');
             } else if(phase == 2) {
               doPattern = true;
               doCounting = true;
@@ -712,7 +713,7 @@ class _TrainingPageState extends State<TrainingPage>
     if(result != null) {
       answeredNr = result;
       print('Answer from CountResultPage: $answeredNr.');
-      await this.widget._logger.writeLine('Dual task: counting ' + (isCountingGreen ? 'GREEN' : 'RED') + '.');
+      await this.widget._logger.writeLine('Counting task: counting ' + (isCountingGreen ? 'GREEN' : 'RED') + '.');
       await this.widget._logger.writeLine('Should answer $answer, patient answered $answeredNr.');
     } else {
       print('ERROR: No result returned from CountResultPage!');

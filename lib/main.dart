@@ -58,6 +58,8 @@ class _MyHomePageState extends State<MyHomePage> {
 //  static final Color textColor = Colors.white;
 
   int patientNr;
+  
+  bool initializing = true;
 
   @override
   void initState() {
@@ -66,10 +68,14 @@ class _MyHomePageState extends State<MyHomePage> {
       await Future.delayed(Duration.zero);
       final prefs = await SharedPreferences.getInstance();
       patientNr = prefs.getInt('patientNr') ?? -2;
+      setState(() {
+        initializing = false;
+      });
+      print('2Got patient Nr in initState() is $patientNr\n'); // Got the number
     }();
 
-    print('Got patient Nr in initState() is $patientNr\n');
-    // TODO patientNr is null here somehow but it's correct in the beginning of Build()
+    print('Got patient Nr in initState() is $patientNr\n'); // null
+    // DoneTODO patientNr is null here somehow but it's correct in the beginning of Build()
   }
 
   @override
@@ -252,23 +258,34 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Center(
         child:
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ButtonTheme(
-              height: 80,
-              minWidth: 200,
-              child: RaisedButton(
-                child: Text(
-                  'Start Test',
-                  style: const TextStyle(fontSize: 46, color: Colors.white),
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ButtonTheme(
+                  height: 80,
+                  minWidth: 200,
+                  child: RaisedButton(
+                    child: Text(
+                      'Begin met testen',
+                      style: const TextStyle(fontSize: 46, color: Colors.white),
+                    ),
+                    padding: EdgeInsets.all(26.0),
+                    color: buttonColor,
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/loading', arguments: TrainingPageArguments(patientNr));
+                    },
+                  ),
                 ),
-                padding: EdgeInsets.all(26.0),
-                color: buttonColor,
-                onPressed: () {
-                  Navigator.pushNamed(context, '/loading', arguments: TrainingPageArguments(patientNr));
-                },
               ),
-            ),
+              Visibility(
+                visible: initializing,
+                child: Image(
+                  image: AssetImage('assets/transparent.png'),
+                ),
+              ),
+            ],
           ),
       ),
     );
