@@ -53,9 +53,11 @@ class _MyHomePageState extends State<MyHomePage> {
   final _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   static final Color buttonColor = Colors.grey;
-  static final Color textColor = Colors.white;
+//  static final Color textColor = Colors.white;
 
   int patientNr;
+
+  bool initializing = true;
 
   @override
   void initState() {
@@ -63,6 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
       await Future.delayed(Duration.zero);
       final prefs = await SharedPreferences.getInstance();
       patientNr = prefs.getInt('patientNr') ?? -2;
+      initializing = false;
     }();
 
     print('Got patient Nr in initState() is $patientNr\n');
@@ -252,82 +255,92 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ButtonTheme(
-                height: 80,
-                minWidth: 200,
-                child: RaisedButton(
-                  child: Text(
-                    'Dag 1',
-                    style: const TextStyle(fontSize: 40, color: Colors.white),
+        child: Stack(
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ButtonTheme(
+                    height: 80,
+                    minWidth: 200,
+                    child: RaisedButton(
+                      child: Text(
+                        'Dag 1',
+                        style: const TextStyle(fontSize: 40, color: Colors.white),
+                      ),
+                      padding: EdgeInsets.all(16.0),
+                      color: buttonColor,
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/loading', arguments: TrainingPageArguments(1, patientNr));
+                      },
+                    ),
                   ),
-                  padding: EdgeInsets.all(16.0),
-                  color: buttonColor,
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/loading', arguments: TrainingPageArguments(1, patientNr));
-                  },
                 ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ButtonTheme(
+                    height: 80,
+                    minWidth: 200,
+                    child: RaisedButton(
+                      child: Text(
+                        'Dag 2',
+                        style: const TextStyle(fontSize: 40, color: Colors.white),
+                      ),
+                      padding: EdgeInsets.all(16.0),
+                      color: buttonColor,
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/loading', arguments: TrainingPageArguments(2, patientNr));
+                      },
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ButtonTheme(
+                    height: 80,
+                    minWidth: 200,
+                    child: RaisedButton(
+                      child: Text(
+                        'Dag 3',
+                        style: const TextStyle(fontSize: 40, color: Colors.white),
+                      ),
+                      padding: EdgeInsets.all(16.0),
+                      color: buttonColor,
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/loading', arguments: TrainingPageArguments(3, patientNr));
+                      },
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ButtonTheme(
+                    height: 80,
+                    minWidth: 200,
+                    child: RaisedButton(
+                      child: Text(
+                        'Dag 4',
+                        style: const TextStyle(fontSize: 40, color: Colors.white),
+                      ),
+                      padding: EdgeInsets.all(16.0),
+                      color: buttonColor,
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/loading', arguments: TrainingPageArguments(4, patientNr));
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Visibility(
+              visible: initializing,
+              child: Image(
+                image: AssetImage('assets/transparent.png'),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ButtonTheme(
-                height: 80,
-                minWidth: 200,
-                child: RaisedButton(
-                  child: Text(
-                    'Dag 2',
-                    style: const TextStyle(fontSize: 40, color: Colors.white),
-                  ),
-                  padding: EdgeInsets.all(16.0),
-                  color: buttonColor,
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/loading', arguments: TrainingPageArguments(2, patientNr));
-                  },
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ButtonTheme(
-                height: 80,
-                minWidth: 200,
-                child: RaisedButton(
-                  child: Text(
-                    'Dag 3',
-                    style: const TextStyle(fontSize: 40, color: Colors.white),
-                  ),
-                  padding: EdgeInsets.all(16.0),
-                  color: buttonColor,
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/loading', arguments: TrainingPageArguments(3, patientNr));
-                  },
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ButtonTheme(
-                height: 80,
-                minWidth: 200,
-                child: RaisedButton(
-                  child: Text(
-                    'Dag 4',
-                    style: const TextStyle(fontSize: 40, color: Colors.white),
-                  ),
-                  padding: EdgeInsets.all(16.0),
-                  color: buttonColor,
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/loading', arguments: TrainingPageArguments(4, patientNr));
-                  },
-                ),
-              ),
-            ),
-          ],
+          ]
         ),
       ),
     );
