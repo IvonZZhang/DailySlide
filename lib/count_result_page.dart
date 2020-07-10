@@ -54,9 +54,9 @@ class _CountResultPage extends State<CountResultPage> {
                 text: TextSpan(
                   style: TextStyle(color: regularTextColor, fontSize: 40, fontWeight: FontWeight.normal, fontStyle: FontStyle.normal),
                   children: <TextSpan>[
-                    TextSpan(text: 'How many '),
-                    TextSpan(text: isCountingGreen ? 'green' : 'red', style: TextStyle(color: isCountingGreen ? Colors.green : Colors.red, fontWeight: FontWeight.bold)),
-                    TextSpan(text: ' dots did you count? Indicate the correct answer by clicking the number.'),
+                    TextSpan(text: 'Hoeveel '),
+                    TextSpan(text: isCountingGreen ? 'groene' : 'rode', style: TextStyle(color: isCountingGreen ? Colors.green : Colors.red, fontWeight: FontWeight.bold)),
+                    TextSpan(text: ' bolletjes heeft u geteld? Duid het juiste antwoord aan door op het nummer te klikken.'),
 //                    TextSpan(text:  '\n' + (answeredNr == -1 ? ''
 //                          : (answeredNr == answer) ? 'Perfect!' : 'Helaas niet helemaal juist...') ,
 //                        style: TextStyle(
