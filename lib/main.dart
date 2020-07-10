@@ -59,6 +59,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   int patientNr;
 
+  bool initializing = true;
+
   @override
   void initState() {
     super.initState();
@@ -66,10 +68,11 @@ class _MyHomePageState extends State<MyHomePage> {
       await Future.delayed(Duration.zero);
       final prefs = await SharedPreferences.getInstance();
       patientNr = prefs.getInt('patientNr') ?? -2;
+      initializing = false;
     }();
 
     print('Got patient Nr in initState() is $patientNr\n');
-    // TODO patientNr is null here somehow but it's correct in the beginning of Build()
+    // DoneTODO patientNr is null here somehow but it's correct in the beginning of Build()
   }
 
   @override
@@ -251,62 +254,74 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       body: Center(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Text("Week 1", style: TextStyle(color: Colors.white70, fontSize: 36),),
-                // Passed day param is 1~10
-                for ( var i in List<int>.generate(5, (index) => index+1))
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ButtonTheme(
-                      height: 80,
-                      minWidth: 200,
-                      child: RaisedButton(
-                        child: Text(
-                          'Dag $i',
-                          style: const TextStyle(fontSize: 40, color: Colors.white),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text("Week 1", style: TextStyle(color: Colors.white70, fontSize: 36),),
+                    // Passed day param is 1~10
+                    for ( var i in List<int>.generate(5, (index) => index+1))
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ButtonTheme(
+                          height: 80,
+                          minWidth: 200,
+                          child: RaisedButton(
+                            child: Text(
+                              'Dag $i',
+                              style: const TextStyle(fontSize: 40, color: Colors.white),
+                            ),
+                            padding: EdgeInsets.all(16.0),
+                            color: buttonColor,
+                            onPressed: () {
+                              Navigator.pushNamed(context, '/loading', arguments: TrainingPageArguments(i, patientNr));
+                            },
+                          ),
                         ),
-                        padding: EdgeInsets.all(16.0),
-                        color: buttonColor,
-                        onPressed: () {
-                          Navigator.pushNamed(context, '/loading', arguments: TrainingPageArguments(i, patientNr));
-                        },
-                      ),
-                    ),
-                  )
+                      )
+                  ],
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text("Week 2", style: TextStyle(color: Colors.white70, fontSize: 36),),
+                    for ( var i in List<int>.generate(5, (index) => index+1))
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ButtonTheme(
+                          height: 80,
+                          minWidth: 200,
+                          child: RaisedButton(
+                            child: Text(
+                              'Dag $i',
+                              style: const TextStyle(fontSize: 40, color: Colors.white),
+                            ),
+                            padding: EdgeInsets.all(16.0),
+                            color: buttonColor,
+                            onPressed: () {
+                              Navigator.pushNamed(context, '/loading', arguments: TrainingPageArguments(i+5, patientNr));
+                            },
+                          ),
+                        ),
+                      )
+                  ],
+                )
               ],
             ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text("Week 2", style: TextStyle(color: Colors.white70, fontSize: 36),),
-                for ( var i in List<int>.generate(5, (index) => index+1))
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ButtonTheme(
-                      height: 80,
-                      minWidth: 200,
-                      child: RaisedButton(
-                        child: Text(
-                          'Dag $i',
-                          style: const TextStyle(fontSize: 40, color: Colors.white),
-                        ),
-                        padding: EdgeInsets.all(16.0),
-                        color: buttonColor,
-                        onPressed: () {
-                          Navigator.pushNamed(context, '/loading', arguments: TrainingPageArguments(i+5, patientNr));
-                        },
-                      ),
-                    ),
-                  )
-              ],
-            )
-          ],
+            Visibility(
+              visible: initializing,
+              child: Image(
+                image: AssetImage('assets/transparent.png'),
+              ),
+            ),
+          ]
+
         ),
       ),
     );
