@@ -56,7 +56,7 @@ class _TrainingPageState extends State<TrainingPage>
   static final Color regularTextColor = Colors.blueGrey[50];
   static final Color selectedCircleColor = Color(0xFF092E6B);
   static final Color notSelectedCircleColor = Color(0xFFA0B8DC);
-  static final Color feedbackTextColor = Colors.deepOrange;
+//  static final Color feedbackTextColor = Colors.deepOrange;
   static final Color exampleTextColor = Color(0xCF092E6B);
 
 //  static final Color snackBarTextColor = Colors.white;
