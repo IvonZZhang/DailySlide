@@ -154,6 +154,7 @@ class _TrainingPageState extends State<TrainingPage>
     }
     greenIndices.add(totalLights - 1);
 
+    lightSequence.clear();
     for (int i = 0; i < totalLights; ++i) {
       lightSequence.add(greenIndices.contains(i) ? 1 : 0);
     }
