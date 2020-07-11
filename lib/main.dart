@@ -68,7 +68,9 @@ class _MyHomePageState extends State<MyHomePage> {
       await Future.delayed(Duration.zero);
       final prefs = await SharedPreferences.getInstance();
       patientNr = prefs.getInt('patientNr') ?? -2;
-      initializing = false;
+      setState(() {
+        initializing = false;
+      });
     }();
 
     print('Got patient Nr in initState() is $patientNr\n');
