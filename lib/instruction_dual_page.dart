@@ -4,7 +4,7 @@ import 'package:flutter/widgets.dart';
 
 import 'training_page.dart';
 
-class InstructionPage extends StatelessWidget{
+class InstructionDualPage extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {

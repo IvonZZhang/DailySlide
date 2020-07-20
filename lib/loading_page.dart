@@ -81,7 +81,12 @@ class _LoadingPageState extends State<LoadingPage>
       print('NO WIFI');
     }
     final TrainingPageArguments args = ModalRoute.of(context).settings.arguments;
-    Navigator.pushReplacementNamed(context, '/instructions', arguments: args);
+    if([1, 2, 4, 6, 9].contains(args.dayNr)) { // Day 1, 2, 4, 6, 9 are single task training days, show instructions respectively
+      Navigator.pushReplacementNamed(context, '/instructions_single', arguments: args);
+    } else {
+      Navigator.pushReplacementNamed(context, '/instructions_dual', arguments: args);
+    }
+
   }
 
   @override

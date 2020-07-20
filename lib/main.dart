@@ -10,6 +10,7 @@ import 'package:flutter/widgets.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'instruction_dual_page.dart';
+import 'instruction_single_page.dart';
 import 'training_page.dart';
 import 'package:flutter/services.dart';
 import 'settings_page.dart';
@@ -34,7 +35,8 @@ class MyApp extends StatelessWidget {
         '/settings': (context) => SettingsPage(),
         '/loading' : (context) => LoadingPage(),
         '/countResult': (context) => CountResultPage(),
-        '/instructions': (context) => InstructionPage(),
+        '/instructions_single': (context) => InstructionSinglePage(),
+        '/instructions_dual': (context) => InstructionDualPage(),
       },
     );
   }
