@@ -44,14 +44,14 @@ class _TrainingPageState extends State<TrainingPage>
   with AfterLayoutMixin<TrainingPage> {
 
   // Constants
-  static final int exampleTimeMs = 80; // 800
-  static final int waitingTimeMs = 4; // 14
+  static final int exampleTimeMs = 800; // 800
+  static final int waitingTimeMs = 14; // 14
   static final int totalLights = 30;
   static final int lightsCycleTimeInSec = 3; // 3
   static final int lightsOnTimeInMillisec = 500; // 500
   static final int delayBetweenExampleAndFirstLightInSec = 2; // 2
   static final int lastFeedbackTimeInSec = 2;
-  static final int pureCountingTaskTimeInSec = 10; // 30
+  static final int pureCountingTaskTimeInSec = 30; // 30
   static final double notificationTextSize = 30.0;
   static final double remainingNrTextSize = 23.0;
 //  static final double feedbackTextSize = 33.0;
