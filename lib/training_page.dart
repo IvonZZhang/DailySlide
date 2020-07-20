@@ -44,17 +44,17 @@ class _TrainingPageState extends State<TrainingPage>
   with AfterLayoutMixin<TrainingPage> {
 
   // Constants
-  static final int exampleTimeMs = 800; // 800
-  static final int waitingTimeMs = 14; // 14
+  static final int exampleTimeMs = 80; // 800
+  static final int waitingTimeMs = 4; // 14
   static final int totalLights = 30;
   static final int lightsCycleTimeInSec = 3; // 3
   static final int lightsOnTimeInMillisec = 500; // 500
   static final int delayBetweenExampleAndFirstLightInSec = 2; // 2
-  static final int lastFeedbackTimeInSec = 6;
-  static final int pureCountingTaskTimeInSec = 30; // 30
+  static final int lastFeedbackTimeInSec = 2;
+  static final int pureCountingTaskTimeInSec = 10; // 30
   static final double notificationTextSize = 30.0;
   static final double remainingNrTextSize = 23.0;
-  static final double feedbackTextSize = 33.0;
+//  static final double feedbackTextSize = 33.0;
 
   static final Color bgColor = Color(0xFF5C5C5C);
   static final Color regularTextColor = Colors.blueGrey[50];
@@ -401,7 +401,7 @@ class _TrainingPageState extends State<TrainingPage>
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text('De onvoltooide training zal niet worden geregistreerd.'),
+                Text('De onvoltooide testen zal niet worden geregistreerd.'),
 //                            Text('You\’re like me. I’m never satisfied.'),
               ],
             ),
@@ -416,7 +416,7 @@ class _TrainingPageState extends State<TrainingPage>
             FlatButton(
               child: Text('JA'),
               onPressed: () async {
-                await widget._logger.writeLine('Training stopped by emergency button.');
+                await widget._logger.writeLine('Testen stopped by emergency button.');
                 await widget._logger.writeFileFooter();
                 Navigator.of(context).popUntil(ModalRoute.withName('/'));
               },
@@ -443,7 +443,7 @@ class _TrainingPageState extends State<TrainingPage>
       child: Scaffold(
         key: scaffoldKey,
         appBar: AppBar(
-          title: Text("Training"),
+          title: Text("Testen"),
         ),
         backgroundColor: bgColor,
         body: Stack(
@@ -500,7 +500,7 @@ class _TrainingPageState extends State<TrainingPage>
                           text: TextSpan(
                             style: TextStyle(color: regularTextColor, fontSize: notificationTextSize, fontWeight: FontWeight.normal, fontStyle: FontStyle.normal),
                             children: isResting ? <TextSpan>[] : <TextSpan>[
-                              TextSpan(text: 'Tel gelijktijdig de '),
+                              TextSpan(text: (phase == 3) ? 'Tel gelijktijdig de ' : 'Tel de '),
                               TextSpan(text: isCountingGreen ? 'groene' : 'rode', style: TextStyle(fontSize: 46, color: isCountingGreen ? Colors.green : Colors.red, fontWeight: FontWeight.bold)),
                               TextSpan(text: ' bolletjes.'),
                             ],
@@ -600,7 +600,7 @@ class _TrainingPageState extends State<TrainingPage>
                                     new Timer(
                                       Duration(seconds: lastFeedbackTimeInSec),
                                         () => setState(() => feedbackText = Text(
-                                        'Training voltooid! Exiting...',
+                                        'Testen voltooid! Exiting...',
                                         style: TextStyle(
                                           fontSize: 30,
                                           color: regularTextColor,
@@ -633,7 +633,7 @@ class _TrainingPageState extends State<TrainingPage>
                 child: Column(
                   children: <Widget>[
                     RaisedButton(
-                      child: Text('Exit training', style: TextStyle(fontSize: 16, color: Colors.white70, fontWeight: FontWeight.bold),),
+                      child: Text('Exit testen', style: TextStyle(fontSize: 16, color: Colors.white70, fontWeight: FontWeight.bold),),
                       color: Colors.red,
                       onPressed: () {
                         showExitDialog();
@@ -667,44 +667,44 @@ class _TrainingPageState extends State<TrainingPage>
       }
       isResting = true;
 //      print('doCounting: $doCounting, doPattern: $doPattern');
-      if(doCounting) {
-        if (doPattern) {
-          feedbackText = Text.rich(
-            TextSpan(
-              style: TextStyle(fontSize: feedbackTextSize, color: regularTextColor),
-              children: <TextSpan>[
-                TextSpan(text: '\nFeedback\n\n\n\n', style: TextStyle(fontWeight: FontWeight.bold)),
-                TextSpan(text: 'Het correct antwoord: $answer bolletjes\n'),
-                TextSpan(text: 'Uw antwoord: $answeredNr bolletjes\n\n'),
-                TextSpan(text: '$nrOfCorrectTrial van de 12 patronen werden perfect gevormd\n'),
-                TextSpan(text: (12-nrOfCorrectTrial).toString() + ' van de 12 patronen waren helaas niet helemaal juist.'),
-              ],
-            ),
-          );
-        } else {
-          feedbackText = Text.rich(
-            TextSpan(
-              style: TextStyle(fontSize: feedbackTextSize, color: regularTextColor),
-              children: <TextSpan>[
-                TextSpan(text: '\nFeedback\n\n\n\n', style: TextStyle(fontWeight: FontWeight.bold)),
-                TextSpan(text: 'Het correct antwoord: $answer bolletjes\n'),
-                TextSpan(text: 'Uw antwoord: $answeredNr bolletjes\n\n'),
-              ]
-            )
-          );
-        }
-      } else {
-        feedbackText = Text.rich(
-          TextSpan(
-            style: TextStyle(fontSize: feedbackTextSize, color: regularTextColor),
-            children: <TextSpan>[
-              TextSpan(text: '\nFeedback\n\n\n\n', style: TextStyle(fontWeight: FontWeight.bold)),
-              TextSpan(text: '$nrOfCorrectTrial van de 12 patronen werden perfect gevormd\n'),
-              TextSpan(text: (12-nrOfCorrectTrial).toString() + ' van de 12 patronen waren helaas niet helemaal juist.'),
-            ],
-          ),
-        );
-      }
+//      if(doCounting) {
+//        if (doPattern) {
+//          feedbackText = Text.rich(
+//            TextSpan(
+//              style: TextStyle(fontSize: feedbackTextSize, color: regularTextColor),
+//              children: <TextSpan>[
+//                TextSpan(text: '\nFeedback\n\n\n\n', style: TextStyle(fontWeight: FontWeight.bold)),
+//                TextSpan(text: 'Het correct antwoord: $answer bolletjes\n'),
+//                TextSpan(text: 'Uw antwoord: $answeredNr bolletjes\n\n'),
+//                TextSpan(text: '$nrOfCorrectTrial van de 12 patronen werden perfect gevormd\n'),
+//                TextSpan(text: (12-nrOfCorrectTrial).toString() + ' van de 12 patronen waren helaas niet helemaal juist.'),
+//              ],
+//            ),
+//          );
+//        } else {
+//          feedbackText = Text.rich(
+//            TextSpan(
+//              style: TextStyle(fontSize: feedbackTextSize, color: regularTextColor),
+//              children: <TextSpan>[
+//                TextSpan(text: '\nFeedback\n\n\n\n', style: TextStyle(fontWeight: FontWeight.bold)),
+//                TextSpan(text: 'Het correct antwoord: $answer bolletjes\n'),
+//                TextSpan(text: 'Uw antwoord: $answeredNr bolletjes\n\n'),
+//              ]
+//            )
+//          );
+//        }
+//      } else {
+//        feedbackText = Text.rich(
+//          TextSpan(
+//            style: TextStyle(fontSize: feedbackTextSize, color: regularTextColor),
+//            children: <TextSpan>[
+//              TextSpan(text: '\nFeedback\n\n\n\n', style: TextStyle(fontWeight: FontWeight.bold)),
+//              TextSpan(text: '$nrOfCorrectTrial van de 12 patronen werden perfect gevormd\n'),
+//              TextSpan(text: (12-nrOfCorrectTrial).toString() + ' van de 12 patronen waren helaas niet helemaal juist.'),
+//            ],
+//          ),
+//        );
+//      }
     });
   }
 
