@@ -80,8 +80,8 @@ class SettingsPage extends StatelessWidget {
                   children: <TextSpan>[
                     TextSpan(text: 'The file name is in this format:\n\n', style: TextStyle(decoration: TextDecoration.underline)),
                     TextSpan(text: 'E.g.  ', style: TextStyle(fontWeight: FontWeight.bold, fontStyle: FontStyle.italic)),
-                    TextSpan(text: '4 2020-02-01 10:12:43 Day3.txt\n\n'),
-                    TextSpan(text: 'which means it stores the data from a training of Day3 from patient 4 performed on 1st, Feb, 2020. And this file will be located in a folder named \'4\'\n\n'),
+                    TextSpan(text: '4 2020-02-01 10:12:43 Week 1 Day 3.txt\n\n'),
+                    TextSpan(text: 'which means it stores the data from a training of Day3 from Week1 from patient 4 performed on 1st, Feb, 2020. And this file will be located in a folder named \'Assembly 4\'\n\n'),
                   ],
                 ),
               ),
