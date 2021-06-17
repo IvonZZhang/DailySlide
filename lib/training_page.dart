@@ -68,6 +68,8 @@ class _TrainingPageState extends State<TrainingPage>
   static final double notificationTextSize = 30.0;
   static final double remainingNrTextSize = 23.0;
   static final double feedbackTextSize = 33.0;
+  static final double patternPointRadius = 30.0; // 27 on Samsung S2 and 30 on Samsung Tab A7
+  static final double patternRelativePadding = 1.6; // 2 on Saumsung S2 and 1.6 on Tab A7
 
   static final Color bgColor = Color(0xFF5C5C5C);
   static final Color regularTextColor = Colors.blueGrey[50];
@@ -146,8 +148,8 @@ class _TrainingPageState extends State<TrainingPage>
   bool isDual = false;
 
   // Location offset for two lights
-  static final double topOffsetLights = 330.0;
-  static final double leftOffsetLights = 510.0;
+  static final double topOffsetLights = 320.0; // 330 on Samsung S2 and 320 on Tab A7
+  static final double leftOffsetLights = 670.0; // 510 on Samsung S2 and 510 on Tab A7
   static final double offsetBetweenLights = 80.0;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -505,7 +507,8 @@ class _TrainingPageState extends State<TrainingPage>
                                   key: showingPatternKey,
                                   selectedColor: selectedCircleColor,
                                   notSelectedColor: notSelectedCircleColor,
-                                  pointRadius: 27,
+                                  pointRadius: patternPointRadius,
+                                  relativePadding: patternRelativePadding,
                                   fillPoints: true,
                                   onInputComplete: (List<int> input, int duration) {},
                                 ),
@@ -515,7 +518,7 @@ class _TrainingPageState extends State<TrainingPage>
                               ),
                               Positioned(
                                 bottom: 40,
-                                right: 200,
+                                right: 260, // 200 on Samsung S2, 260 on Tab A7
                                 child: Visibility(
                                   visible: !isResting,
                                   child: Text(
@@ -540,7 +543,8 @@ class _TrainingPageState extends State<TrainingPage>
                               key: trainingPatternKey,
                               selectedColor: selectedCircleColor,
                               notSelectedColor: notSelectedCircleColor,
-                              pointRadius: 27,
+                              pointRadius: patternPointRadius,
+                              relativePadding: patternRelativePadding,
                               fillPoints: true,
                               onInputComplete:
                                 (List<int> input, int duration) async {
