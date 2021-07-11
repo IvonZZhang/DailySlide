@@ -118,6 +118,9 @@ class _TrainingPageState extends State<TrainingPage>
 
   int answer = 0; // correct answer for counting task
 
+  // Is the notification text at training pattern's place visible
+  bool isNotificationShowing = false;
+
   // The last answered number for counting task, 0 means no task has been performed
   int answeredNr = 0;
 
@@ -591,7 +594,10 @@ class _TrainingPageState extends State<TrainingPage>
 
                                 if (trying == 12) {
                                   if(doCounting) {
+                                    setState(() {isNotificationShowing = true;});
+                                    await Future.delayed(Duration(seconds: 3));
                                     await _navigateToResultPage(context, CountResultPageArguments(isCountingGreen, answer));
+                                    setState(() {isNotificationShowing = false;});
                                   }
 
                                   updateRestingText();
@@ -650,6 +656,21 @@ class _TrainingPageState extends State<TrainingPage>
                 ),
               )
             ),
+            Positioned(
+              top: 350,
+              right: 160,
+              child: Visibility(
+                  visible: isNotificationShowing,
+                  child: Text(
+                    'Geef of het volgende\nscherm aan hoeveel\nbolletjes u geteld heeft\ndoor op het\novereenkomstige getal\nte klikken.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontWeight: FontWeight.normal,
+                        fontSize: 30,
+                        color: regularTextColor),
+                  )
+              ),
+            )
           ],
         ),
       ),
