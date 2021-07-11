@@ -48,7 +48,7 @@ class _CountResultPage extends State<CountResultPage> {
           Flexible(
             flex: 2,
             child: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 0),
               child: RichText(
                 textAlign: TextAlign.center,
                 text: TextSpan(
@@ -76,11 +76,11 @@ class _CountResultPage extends State<CountResultPage> {
                 GridView.count(
                   primary: true,
                   physics: new NeverScrollableScrollPhysics(),
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20, top: 0),
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10,
                   crossAxisCount: 4,
-                  childAspectRatio: 2.3,
+                  childAspectRatio: 3.05,
                   shrinkWrap: true,
                   children:
                     answers.map((item) => new RaisedButton( // TODO: more realistic button
