@@ -539,6 +539,7 @@ class _TrainingPageState extends State<TrainingPage>
                                 nrOfCorrectTrial += listEquals(input, tempPattern) ? 1 : 0;
 
                                 if (trying == 12) {
+                                  //await Future.delayed(Duration(seconds: 10));
                                   await _navigateToResultPage(context, CountResultPageArguments(isCountingGreen, answer));
 
                                   setState(() {
