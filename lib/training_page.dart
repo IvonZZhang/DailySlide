@@ -9,6 +9,8 @@ import 'dart:async';
 import 'logger.dart';
 import 'package:after_layout/after_layout.dart';
 import 'package:intl/intl.dart';
+import 'globals.dart' as globals;
+
 
 class TrainingPageArguments {
   final int dayNr;
@@ -68,8 +70,12 @@ class _TrainingPageState extends State<TrainingPage>
   static final double notificationTextSize = 30.0;
   static final double remainingNrTextSize = 23.0;
   static final double feedbackTextSize = 33.0;
-  static final double patternPointRadius = 27.0; // 27 on Samsung S2 and 30 on Samsung Tab A7
-  static final double patternRelativePadding = 2; // 2 on Saumsung S2 and 1.6 on Tab A7
+  static final double patternPointRadiusS2 = 27.0; // 27 on Samsung S2 and 30 on Samsung Tab A7
+  static final double patternPointRadiusTabA7 = 30.0; // 27 on Samsung S2 and 30 on Samsung Tab A7
+  static final double patternRelativePaddingS2 = 2; // 2 on Saumsung S2 and 1.6 on Tab A7
+  static final double patternRelativePaddingTabA7 = 1.6; // 2 on Saumsung S2 and 1.6 on Tab A7
+  static double patternPointRadius;
+  static double patternRelativePadding;
 
   static final Color bgColor = Color(0xFF5C5C5C);
   static final Color regularTextColor = Colors.blueGrey[50];
@@ -151,9 +157,17 @@ class _TrainingPageState extends State<TrainingPage>
   bool isDual = false;
 
   // Location offset for two lights
-  static final double topOffsetLights = 330.0; // 330 on Samsung S2 and 320 on Tab A7
-  static final double leftOffsetLights = 510.0; // 510 on Samsung S2 and 510 on Tab A7
+  static final double topOffsetLightsS2 = 330.0; // 330 on Samsung S2 and 320 on Tab A7
+  static final double topOffsetLightsTabA7 = 320.0; // 330 on Samsung S2 and 320 on Tab A7
+  static double topOffsetLights;
+  static final double leftOffsetLightsS2 = 510.0; // 510 on Samsung S2 and 670 on Tab A7
+  static final double leftOffsetLightsTabA7 = 670.0; // 510 on Samsung S2 and 670 on Tab A7
+  static double leftOffsetLights;
   static final double offsetBetweenLights = 80.0;
+
+  static final double voorbeeldHorizontalPositionS2 = 200; // 200 on Samsung S2, 260 on Tab A7
+  static final double voorbeeldHorizontalPositionTabA7 = 260; // 200 on Samsung S2, 260 on Tab A7
+  static double voorbeeldHorizontalPosition;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final trainingPatternKey = GlobalKey<PatternLockState>();
@@ -164,6 +178,27 @@ class _TrainingPageState extends State<TrainingPage>
     if (mounted) {
       super.setState(fn);
     }
+  }
+
+  @override
+  void initState() {
+    switch (globals.buildVariant) {
+      case globals.BuildVariants.S2:
+        patternPointRadius = patternPointRadiusS2;
+        patternRelativePadding = patternRelativePaddingS2;
+        topOffsetLights = topOffsetLightsS2;
+        leftOffsetLights = leftOffsetLightsS2;
+        voorbeeldHorizontalPosition = voorbeeldHorizontalPositionS2;
+        break;
+      case globals.BuildVariants.TabA7:
+        patternPointRadius = patternPointRadiusTabA7;
+        patternRelativePadding = patternRelativePaddingTabA7;
+        topOffsetLights = topOffsetLightsTabA7;
+        leftOffsetLights = leftOffsetLightsTabA7;
+        voorbeeldHorizontalPosition = voorbeeldHorizontalPositionTabA7;
+        break;
+    }
+    super.initState();
   }
 
   Future<void> generateLightsSequence() async {
@@ -521,7 +556,7 @@ class _TrainingPageState extends State<TrainingPage>
                               ),
                               Positioned(
                                 bottom: 40,
-                                right: 200, // 200 on Samsung S2, 260 on Tab A7
+                                right: voorbeeldHorizontalPosition, // 200 on Samsung S2, 260 on Tab A7
                                 child: Visibility(
                                   visible: !isResting,
                                   child: Text(
