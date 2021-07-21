@@ -14,8 +14,12 @@ import 'package:flutter/services.dart';
 import 'settings_page.dart';
 import 'package:crypto/crypto.dart';
 import 'package:path/path.dart' as Path;
+import 'globals.dart' as globals;
 
-void main() => runApp(MyApp());
+void main() {
+  globals.buildVariant = globals.BuildVariants.S2;
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override
