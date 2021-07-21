@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'globals.dart' as globals;
 
 class CountResultPageArguments {
   final bool isCountingGreen;
@@ -31,6 +32,36 @@ class _CountResultPage extends State<CountResultPage> {
 
   var originalButtonColor = Colors.white70;
 
+  static final EdgeInsets columnPaddingS2 = EdgeInsets.all(16);
+  static final EdgeInsets columnPaddingTabA7 = EdgeInsets.only(left: 16, right: 16, bottom: 0, top: 16);
+  static EdgeInsets columnPadding;
+
+  static final EdgeInsets gridPaddingS2 = EdgeInsets.all(20);
+  static final EdgeInsets gridPaddingTabA7 = EdgeInsets.only(left: 20, right: 20, bottom: 20, top: 0);
+  static EdgeInsets gridPadding;
+
+  static final double gridAspectRatioS2 = 2.3;
+  static final double gridAspectRatioTabA7 = 3.05;
+  static double gridAspectRatio;
+
+
+  @override
+  void initState() {
+    switch (globals.buildVariant) {
+      case globals.BuildVariants.S2:
+        columnPadding = columnPaddingS2;
+        gridPadding = gridPaddingS2;
+        gridAspectRatio = gridAspectRatioS2;
+        break;
+      case globals.BuildVariants.TabA7:
+        columnPadding = columnPaddingTabA7;
+        gridPadding = gridPaddingTabA7;
+        gridAspectRatio = gridAspectRatioTabA7;
+        break;
+    }
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final CountResultPageArguments args = ModalRoute.of(context).settings.arguments;
@@ -48,7 +79,7 @@ class _CountResultPage extends State<CountResultPage> {
           Flexible(
             flex: 2,
             child: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: columnPadding,
               child: RichText(
                 textAlign: TextAlign.center,
                 text: TextSpan(
@@ -76,11 +107,11 @@ class _CountResultPage extends State<CountResultPage> {
                 GridView.count(
                   primary: true,
                   physics: new NeverScrollableScrollPhysics(),
-                  padding: const EdgeInsets.all(20),
+                  padding: gridPadding,
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10,
                   crossAxisCount: 4,
-                  childAspectRatio: 2.3,
+                  childAspectRatio: gridAspectRatio,
                   shrinkWrap: true,
                   children:
                     answers.map((item) => new RaisedButton( // TODO: more realistic button
