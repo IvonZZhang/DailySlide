@@ -660,7 +660,7 @@ class _TrainingPageState extends State<TrainingPage>
               child: Visibility(
                   visible: isNotificationShowing,
                   child: Text(
-                    'Geef of het volgende\nscherm aan hoeveel\nbolletjes u geteld heeft\ndoor op het\novereenkomstige getal\nte klikken.',
+                    'Geef op het volgende\nscherm aan hoeveel\nbolletjes u geteld heeft\ndoor op het\novereenkomstige getal\nte klikken.',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         fontWeight: FontWeight.normal,
