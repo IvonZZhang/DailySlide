@@ -18,7 +18,7 @@ class SettingsPage extends StatelessWidget {
       appBar: AppBar(
         title: Text('Settings'),
       ),
-      resizeToAvoidBottomPadding: false,
+      resizeToAvoidBottomInset: false,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,

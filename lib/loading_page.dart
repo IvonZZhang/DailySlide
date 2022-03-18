@@ -1,11 +1,12 @@
 import 'dart:io';
 import 'package:after_layout/after_layout.dart';
-import 'package:connectivity/connectivity.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:daily_slide/training_page.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as Path;
 import 'package:permission_handler/permission_handler.dart';
+import 'package:path_provider/path_provider.dart';
 
 class LoadingPage extends StatefulWidget {
   @override
@@ -18,22 +19,20 @@ class _LoadingPageState extends State<LoadingPage>
   Future<int> uploadToFirebase() async {
 
     // Check storage permission
-    PermissionStatus permission = await PermissionHandler().checkPermissionStatus(PermissionGroup.storage);
-//    print('Permission is ${permission.value}');
-    if(permission.value != PermissionStatus.granted.value) {
-      await PermissionHandler().requestPermissions([PermissionGroup.storage]);
+    var permissionStatus = await Permission.storage.status;
+    print('Permission is ${permissionStatus.toString()}');
+    if (permissionStatus != PermissionStatus.granted) {
+      await Permission.storage.request().isGranted;
     }
 
-    if(! await Directory('/storage/emulated/0/PDlabTest/').exists()) {
-      await Directory('/storage/emulated/0/PDlabTest/').create(recursive: true);
+    Directory appUploadedDocDir = await getExternalStorageDirectory();
+    Directory appTempDocDir = Directory("${appUploadedDocDir.path}/temp/");
+
+    if (! await appTempDocDir.exists()) {
+      await appTempDocDir.create(recursive: true);
     }
 
-    if(! await Directory('/storage/emulated/0/PDlabTest/temp/').exists()) {
-      await Directory('/storage/emulated/0/PDlabTest/temp/').create(recursive: true);
-    }
-
-    Directory appDocDir = Directory('/storage/emulated/0/PDlabTest/temp/');
-    await for (var f in appDocDir.list()) {
+    await for (var f in appTempDocDir.list()) {
       if (f.toString().endsWith('txt\'')) {
         String filename = Path.basename(f.path);
         print('File under process: $filename');
@@ -42,26 +41,19 @@ class _LoadingPageState extends State<LoadingPage>
           f.delete();
           continue;
         }
-        try {
-          int patientNr = int.parse(filename.split(' ').first);
-          final StorageReference ref = FirebaseStorage().ref().child('/Test $patientNr/$filename');
-          var uploadTask = ref.putFile(f);
-          StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
-
-          if(taskSnapshot.error == null) {
+        int patientNr = int.parse(filename.split(' ').first);
+        UploadTask task = FirebaseStorage.instance.ref().child('/Test $patientNr/$filename').putFile(f);
+        task
+          .then((TaskSnapshot snapshot) {
             // Move file in temp directory to external directory and delete it
-            File('/storage/emulated/0/PDlabTest/temp/$filename').copySync('/storage/emulated/0/PDlabTest/$filename');
-            await f.delete();
+            File('${appTempDocDir.path}/$filename').copySync('${appUploadedDocDir.path}/$filename');
+            f.delete();
             print('Upload successful!');
-          } else {
-            print('Error during uploading!');
-          }
-        } catch (Exception) {
-          print(Exception.toString());
-          print('Something went wrong! Data might not fully uploaded...');
-//                          syncInfo = 'Something went wrong! Data might not fully uploaded...';
-          continue;
-        }
+          })
+          .catchError((Object e) {
+            print('Error during uploading: ${e.toString()}');
+            print('Something went wrong! Data might not fully uploaded...');
+          });
       }
     }
 
