@@ -1,6 +1,5 @@
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 import 'training_page.dart';
 
@@ -13,7 +12,7 @@ class InstructionDualPage extends StatelessWidget{
       appBar: AppBar(
         title: Text('Training Instructies'),
       ),
-      resizeToAvoidBottomPadding: false,
+      resizeToAvoidBottomInset: false,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,

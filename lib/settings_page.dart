@@ -18,7 +18,7 @@ class SettingsPage extends StatelessWidget {
       appBar: AppBar(
         title: Text('Settings'),
       ),
-      resizeToAvoidBottomPadding: false,
+      resizeToAvoidBottomInset: false,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -59,7 +59,7 @@ class SettingsPage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  RaisedButton(
+                  ElevatedButton(
                     child: Text('Enter and go back', style: TextStyle(fontSize: 17),),
                     onPressed: () {
                       if(_textEditingController.text.isEmpty){

@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:path_provider/path_provider.dart';
 
 class Logger {
   String _filename;
@@ -22,27 +23,26 @@ class Logger {
     *
     */
     // Check storage permission
-    PermissionStatus permission = await PermissionHandler().checkPermissionStatus(PermissionGroup.storage);
-    print('Permission is ${permission.value}');
-    if(permission.value != PermissionStatus.granted.value) {
-      await PermissionHandler().requestPermissions([PermissionGroup.storage]);
+    var permissionStatus = await Permission.storage.status;
+    print('Permission is ${permissionStatus.toString()}');
+    if (permissionStatus != PermissionStatus.granted) {
+      await Permission.storage.request().isGranted;
     }
 
-    Directory directory = Directory('/storage/emulated/0/PDlabAssembly/temp/');
+    // /data/user/0/com.ivonzhang.daily_slide/files
+    Directory directory = await getExternalStorageDirectory();
+    Directory appTempDocDir = Directory("${directory.path}/temp");
 
-    if(! await directory.exists()) {
-      await directory.create(recursive: true);
+    if(! await appTempDocDir.exists()) {
+      await appTempDocDir.create(recursive: true);
     }
-
-
-
-    return directory.path;
+    return appTempDocDir.path;
   }
 
   Future<File> get _localFile async {
     final path = await _localPath;
 //    /data/user/0/com.ivonzhang.daily_slide/app_flutter
-    return File('$path/$_filename.txt');
+    return File('$path/$_filename.txt').create(recursive: true);
   }
 
   Future<int> readCounter() async {
