@@ -139,7 +139,7 @@ class _TrainingPageState extends State<TrainingPage>
   bool isCountingGreen = true;
 
   List<int> lightSequence = [];
-  
+
   // Difference can be: Text saying red/green, Circles, Feedback text on counting, Log, Result page
   bool doCounting = false;
   bool doPattern = true;
@@ -233,18 +233,21 @@ class _TrainingPageState extends State<TrainingPage>
 
   void startCountingLights() {
     setState(() {
-      // Decide which color to count
-      isCountingGreen = Random().nextBool();
-      if (isCountingGreen == false) { // Make sure the last one is the one to be count
-        for (int i = 0; i < lightSequence.length; ++i) {
-          lightSequence[i] ^= 1; // reverse every bit
-        }
-      }
       answer = 0;
       lightsCounter = 0;
     });
 
     if(phase == 2) {
+      setState(() {
+        // Decide which color to count
+        isCountingGreen = Random().nextBool();
+        if (isCountingGreen == false) {
+          // Make sure the last one is the one to be count
+          for (int i = 0; i < lightSequence.length; ++i) {
+            lightSequence[i] ^= 1; // reverse every bit
+          }
+        }
+      });
       new Timer(Duration(seconds: pureCountingTaskTimeInSec), () async {
         this._lightsTimerPeriod.cancel();
         await _navigateToResultPage(context, CountResultPageArguments(isCountingGreen, answer));
@@ -322,6 +325,19 @@ class _TrainingPageState extends State<TrainingPage>
   }
 
   void startPatternExample() {
+    if (doCounting) {
+      setState(() {
+        // Decide which color to count
+        isCountingGreen = Random().nextBool();
+        if (isCountingGreen == false) {
+          // Make sure the last one is the one to be count
+          for (int i = 0; i < lightSequence.length; ++i) {
+            lightSequence[i] ^= 1; // reverse every bit
+          }
+        }
+      });
+    }
+
     if(doPattern) {
       _timerPeriod = new Timer.periodic(Duration(milliseconds: exampleTimeMs), (Timer timer) {
         if (nodeLeft == 0) {// Example pattern finished
@@ -402,7 +418,7 @@ class _TrainingPageState extends State<TrainingPage>
           feedbackText = Text(' ');
           nrOfCorrectTrial = 0;
         });
-        
+
         new Timer(new Duration(microseconds: 1), () async {
           await generateLightsSequence();
           if(doPattern) {

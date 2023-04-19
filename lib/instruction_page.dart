@@ -42,8 +42,10 @@ class InstructionPage extends StatelessWidget{
               alignment: Alignment.bottomRight,
               child: Padding(
                 padding: const EdgeInsets.only(right: 28.0),
-                child: OutlineButton(
-                  borderSide: BorderSide(style: BorderStyle.solid, width: 2.0),
+                child: OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(width: 2.0, style: BorderStyle.solid)
+                  ),
                   child: Text('Klik hier om de training te starten'),
                   onPressed: () {
                     final TrainingPageArguments args = ModalRoute.of(context).settings.arguments;
